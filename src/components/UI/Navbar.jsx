@@ -10,10 +10,26 @@ function Navbar() {
         setIsAuth(false);
         localStorage.removeItem('auth')
     }
+    const handleLogout = () => {
+        setIsAuth(false);
+        localStorage.removeItem('auth')
+        fetch('http://localhost:8000/api-auth/logout/', {
+            method: 'POST',
+            credentials: 'include',  // Важно для завершения сессии
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('User logged out');
+                }
+            })
+            .catch(error => {
+                console.error('Error logging out:', error);
+            });
+    };
 
     return (
         <div className='navbar'>
-            <MyButton onClick={logout}>
+            <MyButton onClick={handleLogout}>
                 Выйти
             </MyButton>
             <div className='navbar__links'>
