@@ -58,7 +58,6 @@ function Posts() {
         <div className="App">
             <MyButton onClick={() => setModal(true)}>Open Form</MyButton>
             <MyModal visible={modal} setVisible={setModal}><PostForm create={createPost} /></MyModal>
-            {/*<PostForm create={createPost} />*/}
             <PostFilter filter={filter} setFilter={setFilter}/>
             <MySelect
                 value={limit}

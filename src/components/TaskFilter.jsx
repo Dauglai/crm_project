@@ -3,7 +3,7 @@ import MyInput from "./UI/input/MyInput";
 import MySelect from "./UI/select/MySelect";
 
 
-const PostFilter = ({filter, setFilter}) => {
+const TaskFilter = ({filter, setFilter}) => {
     return (
         <div>
             <MyInput
@@ -14,10 +14,10 @@ const PostFilter = ({filter, setFilter}) => {
             <MySelect
                 value={filter.sort}
                 onChange={selectedSort => setFilter({...filter, sort: selectedSort})}
-                options={[{name: 'По названию', value: 'name'}, {name: 'По сроку выполнения', value: 'deadline'}]} defaultValue={'Фильтры'}
+                options={[{name: 'По теме', value: 'name'}, {name: 'По сроку выполнения', value: 'deadline'}]} defaultValue={'Фильтры'}
             />
         </div>
     )
 };
 
-export default PostFilter;
+export default TaskFilter;

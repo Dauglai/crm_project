@@ -1,58 +1,77 @@
 import React, {useEffect, useRef, useState} from 'react';
 import PostForm from '../components/PostForm';
-import PostFilter from '../components/PostFilter';
 import MyModal from '../components/UI/MyModal/MyModal';
 import Loader from '../components/UI/Loader/Loader';
 import MyButton from '../components/UI/button/MyButton';
-import {usePosts} from '../hooks/usePosts';
+import { useTasks } from '../hooks/useTasks';
 import TaskService from '../components/API/PostService';
 import useFetching from '../hooks/useFetching';
-import {getPageCount, getPagesArray} from '../utils/pages';
+import { getPageCount, getPagesArray } from '../utils/pages';
 import Pagination from '../components/UI/pagination/Pagination';
-import {useObserver} from "../hooks/useObserver";
-import MySelect from "../components/UI/select/MySelect";
 import TaskTable from "../components/TaskTable";
+import TaskFilter from "../components/TaskFilter";
+import axios from "axios";
+import MySelect from "../components/UI/select/MySelect";
+import {useObserver} from "../hooks/useObserver";
 
-function Posts() {
+function Tasks() {
     const [tasks, setTasks] = useState([]);
-    const [filter, setFilter] = useState({sort: '', query: ''});
+    const [error, setError] = useState(null);
+    const [filter, setFilter] = useState({ sort: '', query: '' });
     const [modal, setModal] = useState(false);
-    const sortedAndSearchedPosts = usePosts(tasks, filter.sort, filter.query)
+    const sortedAndSearchedTasks = useTasks(tasks, filter.sort, filter.query);
     const [totalPages, setTotalPages] = useState(0);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
+    const lastElement = useRef();
+    const observer = useRef();
     let pagesArray = getPagesArray(totalPages);
 
-    const [fetchPosts, isPostLoading, postError] = useFetching( async (limit, page)=> {
-        const response = await TaskService.getAll(limit, page)
-        setTasks([...tasks,...response.data]);
-        const totalCount = response.headers['x-total-count']
-        setTotalPages(getPageCount(totalCount, limit))
-    })
+    const [fetchTasks, isTaskLoading, taskError] = useFetching(async (limit, page) => {
+        try {
+            const response = await axios.get('http://localhost:8000/task/', {
+                params: { _limit: limit, _page: page },
+                withCredentials: true,
+            });
+            setTasks(response.data);
+            const totalCount = 100
+            console.log('totalCount', totalCount);
+            setTotalPages(getPageCount(totalCount, limit)); // Если -1, показываем все
+        } catch (err) {
+            setError('Failed to load tasks');
+        }
+    });
 
 
     useEffect(() => {
-        fetchPosts(limit, page);
-    }, [page, limit])
+        fetchTasks(limit, page);
+    }, [page, limit]);
 
-    const createTask = (newTasks) => {
-        setTasks([...tasks, newTasks])
-        setModal(false)
-    }
+    const createTask = (newTask) => {
+        setTasks([...tasks, newTask]);
+        setModal(false);
+    };
 
     const changePage = (page) => {
         setPage(page);
-    }
+    };
+
+    const removeTask = (task) => {
+        setTasks(tasks.filter(p => p.id !== task.id));
+    };
 
     return (
         <div className="App">
             <MyButton onClick={() => setModal(true)}>Open Form</MyButton>
-            <MyModal visible={modal} setVisible={setModal}><PostForm create={createTask} /></MyModal>
-            {/*<PostForm create={createPost} />*/}
+            <MyModal visible={modal} setVisible={setModal}><PostForm create={createTask}/></MyModal>
+            <TaskFilter filter={filter} setFilter={setFilter}/>
             <MySelect
                 value={limit}
-                onChange={val => setLimit(val)}
-                defaultValue={"Кол-во псотов на странице"}
+                onChange={(val) => {
+                    setLimit(val);
+                    setPage(1); // сбрасываем на первую страницу при изменении лимита
+                }}
+                defaultValue={"Кол-во постов на странице"}
                 options={[
                     {value: 5, name: '5'},
                     {value: 10, name: '10'},
@@ -60,18 +79,18 @@ function Posts() {
                     {value: -1, name: 'Показать все'},
                 ]}
             />
-            <hr style={{margin: '15px 0'}} />
-            {postError && <p>Fail: {postError}</p>}
-            <TaskTable tasks={sortedAndSearchedPosts} title='List'/>
-            {isPostLoading
-                && <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}><Loader/></div>
-            }
+            <hr style={{margin: '15px 0'}}/>
+            {taskError && <p>Fail: {taskError}</p>}
+            <TaskTable tasks={sortedAndSearchedTasks} error={error}/>
+            {isTaskLoading &&
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}><Loader/></div>}
             <Pagination
                 pagesArray={pagesArray}
                 page={page}
                 changePage={changePage}/>
+
         </div>
     );
 }
 
-export default Posts;
+export default Tasks;

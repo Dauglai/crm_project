@@ -1,0 +1,42 @@
+.table {
+    border: 1px solid #eee;
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse; /* Сливаем границы */
+    font-size: 16px; /* Размер шрифта таблицы */
+    font-family: Arial, sans-serif; /* Стиль шрифта */
+}
+
+.table th,
+.table td {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Добавляет "..." для длинного текста */
+}
+
+.table th {
+    font-weight: bold;
+    background: #efefef;
+}
+
+/* Второй столбец – шире остальных */
+.table td:nth-child(2),
+.table th:nth-child(2) {
+    width: 100%; /* Регулируйте ширину по необходимости */
+    text-align: left; /* Для второго столбца текст выравнивается по левому краю */
+}
+
+.table td {
+    vertical-align: middle; /* Вертикальное центрирование */
+}
+
+.table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #F7F7F7;
+}

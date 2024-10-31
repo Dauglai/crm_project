@@ -1,0 +1,31 @@
+.profileModal {
+    position: fixed; /* Фиксирует модальное окно на экране */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Поверх всех элементов */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.profileModal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.profileModalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    max-height: 500px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+

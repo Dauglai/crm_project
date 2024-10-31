@@ -70,3 +70,13 @@
 .navbar__links {
     margin-left: auto;
 }
+
+.clickable-name {
+    color: #222; /* Синий цвет текста */
+    cursor: pointer; /* Указывает, что элемент кликабельный */
+}
+
+.clickable-name:hover {
+    color: #0056b3; /* Более темный оттенок синего при наведении */
+    text-decoration: none; /* Убираем подчеркивание при наведении */
+}
