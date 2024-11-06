@@ -1,0 +1,81 @@
+/* TaskCreateForm.css */
+
+.task-form {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.task-form h2 {
+    text-align: center;
+    color: #333;
+}
+
+.task-form label {
+    margin-bottom: 15px;
+    color: #555;
+    font-weight: bold;
+}
+
+.task-form input,
+.task-form select,
+.task-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.task-form fieldset {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.task-form legend {
+    font-weight: bold;
+    color: #333;
+}
+
+.task-form button {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.task-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Изменяем стиль fieldset для выравнивания checkbox по левому краю */
+fieldset {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Настроим расположение checkbox и текста в одной строке */
+fieldset label {
+    display: inline-flex; /* Расположим элементы по горизонтали */
+    align-items: center;  /* Вертикальное выравнивание по центру */
+    margin-right: 8px;    /* Расстояние между элементами */
+}
+
+/* Настроим отступы для чекбокса */
+fieldset input[type="checkbox"] {
+    margin-right: 8px;
+}

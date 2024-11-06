@@ -10,7 +10,7 @@ const ProfileItem = (props) => {
     const [profile, setProfile] = useState({});
     const [] = useFetching(async (id)=>{
         const response = await ProfileService.getbyId(id)
-        setProfile(response.data)
+        setProfile(response)
     })
     return (
         <div className="profile-item">

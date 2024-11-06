@@ -1,0 +1,18 @@
+.task-page-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    width: 200px; /* Задайте нужную ширину */
+    margin-right: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.table-container {
+    flex-grow: 1;
+}

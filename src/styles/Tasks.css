@@ -1,0 +1,30 @@
+/* Tasks.css */
+
+.tasks-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.content-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.table-wrapper {
+    flex-grow: 1;
+}
+
+/* Tasks.css */
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Расстояние между элементами */
+    margin-bottom: 20px;
+}
+
+.filter-container .select-container {
+    margin-bottom: 0;
+}

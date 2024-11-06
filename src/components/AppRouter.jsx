@@ -7,7 +7,7 @@ import Login from "../pages/Login";
 import {AuthContext} from "../context";
 import Loader from "./UI/Loader/Loader";
 import Tasks from "../pages/Tasks";
-import TaskTable from "./TaskTable";
+import TaskForm from "./TaskCreateForm";
 
 function AppRouter() {
     const {isAuth, isLoading} = React.useContext(AuthContext);
@@ -20,6 +20,7 @@ function AppRouter() {
                 <Route path="/posts" Component={Posts}/>
                 <Route path="/posts/:id" Component={PostIdPages}/>
                 <Route path="/tasks" Component={Tasks}/>
+                <Route path="/tasks/create" Component={TaskForm}/>
                 <Route path="/about" Component={About}/>
                 <Route path="/login" Component={Login}/>
                 <Route

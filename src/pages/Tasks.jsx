@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+// Tasks.js
+import React, { useEffect, useState } from 'react';
 import TaskTable from "../components/TaskTable";
 import Pagination from '../components/UI/pagination/Pagination';
 import MySelect from "../components/UI/select/MySelect";
@@ -6,7 +7,10 @@ import axios from "axios";
 import { getPageCount, getPagesArray } from '../utils/pages';
 import Loader from '../components/UI/Loader/Loader';
 import TaskFilter from "../components/TaskFilter";
-import {useTasks} from "../hooks/useTasks";
+import { useTasks } from "../hooks/useTasks";
+import '../styles/Tasks.css';
+import RoleList from "../components/UI/RoleList/RoleList";
+import TaskForm from '../components/TaskCreateForm';
 
 function Tasks() {
     const [tasks, setTasks] = useState([]);
@@ -14,9 +18,12 @@ function Tasks() {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    const [filter, setFilter] = useState({sort: '', query: '', role: 'author'});
-    const [modal, setModal] = useState(false);
-    const sortedAndSearchedPosts = useTasks(tasks, filter.sort, filter.query)
+    const [filter, setFilter] = useState({ sort: '', query: '', role: 'all' });
+    const sortedAndSearchedPosts = useTasks(tasks, filter.sort, filter.query);
+
+    const handleTaskCreated = (newTask) => {
+        setTasks([...tasks, newTask]);
+    };
 
     const fetchTasks = async () => {
         setIsLoading(true);
@@ -27,13 +34,12 @@ function Tasks() {
                     page: page,
                     query: filter.query,
                     ordering: filter.sort,
-                    role: filter.role,},
+                    role: filter.role,
+                },
                 withCredentials: true,
             });
-            setTasks(response.data.results); // предполагается, что `results` содержит задачи на странице
-
-            // Установка количества страниц на основе общего числа задач
-            const totalCount = response.data.count; // `count` возвращает общее количество задач
+            setTasks(response.data.results);
+            const totalCount = response.data.count;
             setTotalPages(getPageCount(totalCount, limit));
         } catch (err) {
             console.error('Failed to load tasks:', err);
@@ -51,32 +57,27 @@ function Tasks() {
     };
 
     return (
-        <div className="App">
-            <TaskFilter filter={filter} setFilter={setFilter}/>
-            <MySelect
-                value={limit}
-                onChange={(val) => {
-                    setLimit(val);
-                    setPage(1); // Переключаемся на первую страницу при изменении лимита
-                }}
-                defaultValue="Кол-во постов на странице"
-                options={[
-                    { value: 5, name: '5' },
-                    { value: 10, name: '10' },
-                    { value: 25, name: '25' },
-                    { value: 100, name: '100' },
-                ]}
-            />
-            <hr style={{ margin: '15px 0' }} />
-            {isLoading ? (
-                <Loader />
-            ) : (<TaskTable tasks={sortedAndSearchedPosts} />
-            )}
-            <Pagination
-                pagesArray={getPagesArray(totalPages)}
-                page={page}
-                changePage={changePage}
-            />
+        <div className="tasks-container">
+            <div className="content-container">
+                <RoleList
+                    selectedRole={filter.role}
+                    onRoleChange={(selectedRole) => setFilter({ ...filter, role: selectedRole })}
+                />
+                <div className="table-wrapper">
+                    <TaskFilter filter={filter} setFilter={setFilter} setPage={setPage} setLimit={setLimit} limit={limit} page={page} />
+                    <hr style={{ margin: '15px 0' }} />
+                    {isLoading ? (
+                        <Loader />
+                    ) : (
+                        <TaskTable tasks={sortedAndSearchedPosts} />
+                    )}
+                    <Pagination
+                        pagesArray={getPagesArray(totalPages)}
+                        page={page}
+                        changePage={changePage}
+                    />
+                </div>
+            </div>
         </div>
     );
 }
