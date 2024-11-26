@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import ProfileItem from "./ProfileItem";
 import ProfileModal from "./UI/ProfileModal/ProfileModal";
 import "../styles/App.css";
+import {useNavigate} from "react-router-dom";
 
 const TaskItem = (props) => {
     const { task } = props;
     const [modalVisible, setModalVisible] = useState(false);
     const [modalProfile, setModalProfile] = useState(null);
+    const navigate = useNavigate();
 
     const showProfileModal = (profile) => {
         setModalProfile(profile);
@@ -28,7 +30,7 @@ const TaskItem = (props) => {
         <>
             <tr key={task.id}>
                 <td>{task.id}</td>
-                <td>{task.name}</td>
+                <td className="clickable-name" onClick={() => navigate("/tasks/" + task.id)}>{task.name}</td>
                 <td className="clickable-name" onClick={() => showProfileModal(task.author)}>
                     {task.author ? `${task.author.surname} ${task.author.name} ${task.author.patronymic}` : 'Автор не указан'}
                 </td>

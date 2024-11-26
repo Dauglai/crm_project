@@ -21,6 +21,14 @@ function Tasks() {
     const [filter, setFilter] = useState({ sort: '', query: '', role: 'all' });
     const sortedAndSearchedPosts = useTasks(tasks, filter.sort, filter.query);
 
+    const handleAccept = async (notifId) => {
+        await axios.post(`/notifications/${notifId}/`, { action: 'accept' });
+    };
+
+    const handleDismiss = async (notifId) => {
+        await axios.post(`/notifications/${notifId}/`, { action: 'dismiss' });
+    };
+
     const handleTaskCreated = (newTask) => {
         setTasks([...tasks, newTask]);
     };

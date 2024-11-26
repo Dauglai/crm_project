@@ -79,3 +79,17 @@ fieldset label {
 fieldset input[type="checkbox"] {
     margin-right: 8px;
 }
+
+.selection-block {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.selection-list {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 50px;
+    background-color: #f9f9f9;
+}

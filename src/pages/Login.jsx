@@ -49,7 +49,7 @@ const Login = () => {
             // Успешная аутентификация
             setIsAuth(true);
             localStorage.setItem('auth', 'true');
-            navigate('/posts');  // Перенаправляем на страницу "posts"
+            navigate('/profile');  // Перенаправляем на страницу "posts"
 
         } catch (error) {
             console.error(error);

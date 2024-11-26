@@ -1,0 +1,18 @@
+.comment {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+.comment p {
+    margin: 0;
+    padding: 2px 0;
+}
+
+.comment span {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}

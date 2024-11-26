@@ -1,11 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/TaskForm.css";
-import useFetching from "../hooks/useFetching";
-import ProfileService from "./API/ProfileService";
+import ProfileModal from "./UI/ProfileModal/ProfileModal";
+import EmployeeList from "./EmployeeList";
+import {useNavigate} from "react-router-dom";
 
 const TaskCreateForm = () => {
     const [profiles, setProfiles] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const navigate = useNavigate();
+    const [modalField, setModalField] = useState(""); // Для определения, какой тип пользователей выбирается в данный момент
     const [taskData, setTaskData] = useState({
         name: '',
         deadline: '',
@@ -16,15 +20,12 @@ const TaskCreateForm = () => {
         coordinators: [],
     });
 
-
-    const fetchTasks = async ()=> {
-        const response = await axios.get('http://localhost:8000/accounts/profile/',
-            {withCredentials: true});
-        console.log(response.data);
-        setProfiles(response.data.results);
-    };
-
     useEffect(() => {
+        const fetchTasks = async () => {
+            const response = await axios.get('http://localhost:8000/accounts/profile/',
+                { withCredentials: true });
+            setProfiles(response.data.results);
+        };
         fetchTasks();
     }, []);
 
@@ -36,17 +37,10 @@ const TaskCreateForm = () => {
         }));
     };
 
-    const handleCheckboxChange = (e, field) => {
-        const { value, checked } = e.target;
-        setTaskData(prevData => {
-            const updatedField = checked
-                ? [...prevData[field], Number(value)]
-                : prevData[field].filter(item => item !== Number(value));
-            return { ...prevData, [field]: updatedField };
-        });
+    const openModal = (field) => {
+        setModalField(field);
+        setModalVisible(true);
     };
-
-
 
     const csrfToken = document.cookie
         .split("; ")
@@ -56,18 +50,15 @@ const TaskCreateForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(
-                'http://localhost:8000/task/create/',
-                taskData,
-                {
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json"
-                    },
-                    withCredentials: true
-                }
-            );
+            await axios.post('http://localhost:8000/task/create/', taskData, {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            });
             alert("Task created successfully");
+            navigate('/tasks');
         } catch (error) {
             console.error("Error creating task:", error);
             alert("Failed to create task");
@@ -118,42 +109,47 @@ const TaskCreateForm = () => {
                 >
                     <option value="">Выберите адресата</option>
                     {profiles.map(user => (
-                        <option key={user.author.id} value={user.author.id}>{user.surname} {user.name} {user.patronymic}</option>
+                        <option key={user.author.id}
+                                value={user.author.id}>{user.surname} {user.name} {user.patronymic}</option>
                     ))}
                 </select>
             </fieldset>
 
-            <fieldset>
-                <legend>Наблюдатели</legend>
-                {profiles.map(user => (
-                    <label key={user.author.id}>
-                        <input
-                            type="checkbox"
-                            value={user.author.id}
-                            checked={taskData.observers.includes(user.author.id)}
-                            onChange={(e) => handleCheckboxChange(e, 'observers')}
-                        />
-                        {user.surname} {user.name} {user.patronymic}
-                    </label>
-                ))}
-            </fieldset>
+            <div className="selection-block">
+                <div>
+                    <h3>Наблюдатели</h3>
+                    <div className="selection-list">
+                        {taskData.observers.map(id => {
+                            const user = profiles.find(profile => profile.author.id === id);
+                            return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
+                        })}
+                    </div>
+                    <button type="button" onClick={() => openModal("observers")}>Добавить наблюдателей</button>
+                </div>
 
-            <fieldset>
-                <legend>Согласующие</legend>
-                {profiles.map(user => (
-                    <label key={user.author.id}>
-                        <input
-                            type="checkbox"
-                            value={user.author.id}
-                            checked={taskData.coordinators.includes(user.author.id)}
-                            onChange={(e) => handleCheckboxChange(e, 'coordinators')}
-                        />
-                        {user.surname} {user.name} {user.patronymic}
-                    </label>
-                ))}
-            </fieldset>
+                <div>
+                    <h3>Координаторы</h3>
+                    <div className="selection-list">
+                        {taskData.coordinators.map(id => {
+                            const user = profiles.find(profile => profile.author.id === id);
+                            return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
+                        })}
+                    </div>
+                    <button type="button" onClick={() => openModal("coordinators")}>Добавить координаторов</button>
+                </div>
+            </div>
 
-            <button type="submit">Создать задачу</button>
+            <button type="submit" style={{marginTop: '20px'}}>Создать задачу</button>
+
+
+            <ProfileModal visible={modalVisible} setVisible={setModalVisible}>
+                <EmployeeList
+                    profiles={profiles}
+                    taskData={taskData}
+                    setTaskData={setTaskData}
+                    field={modalField}
+                />
+            </ProfileModal>
         </form>
     );
 };

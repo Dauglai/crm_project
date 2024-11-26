@@ -15,6 +15,7 @@
 }
 
 .profileModal.active {
+    display: flex;
     opacity: 1;
     pointer-events: all;
 }
@@ -28,4 +29,3 @@
     width: 100%;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
