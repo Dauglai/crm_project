@@ -1,0 +1,80 @@
+/* Navbar.css */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa; /* Светлый фон */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    font-family: 'Arial', sans-serif; /* Новый шрифт */
+    width: 100%; /* Растягиваем на всю ширину */
+}
+
+.header_logo {
+    height: 50px; /* Высота логотипа */
+    width: auto;
+    cursor: pointer;
+}
+
+.header_nav {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.header__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.header__list-item {
+    font-size: 16px;
+    font-weight: 500; /* Средний вес шрифта */
+}
+
+.header__list-item a {
+    text-decoration: none;
+    color: #007bff; /* Цвет ссылок */
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.header__list-item a:hover {
+    text-decoration: underline;
+    color: #007bff;
+}
+
+.logout-button {
+    background-color: #dc3545; /* Красный фон */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.logout-button:hover {
+    background-color: #bd2130; /* Более темный красный при наведении */
+}
+
+/* Добавим отступ под Navbar */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.profile-page {
+    margin-top: 80px; /* Отступ от Navbar */
+    padding: 20px;
+    font-family: 'Arial', sans-serif; /* Новый шрифт */
+}
+.header_button {
+    margin-left: auto; /* Перемещает кнопку вправо */
+}

@@ -1,7 +1,8 @@
 import React, {useContext} from 'react';
 import {Link} from 'react-router-dom';
-import {AuthContext} from "../../context";
-import MyButton from "./button/MyButton";
+import {AuthContext} from "../../../context";
+import MyButton from "../button/MyButton";
+import "./Navbar.css"
 
 function Navbar() {
     const {isAuth, setIsAuth} = useContext(AuthContext);
@@ -28,16 +29,23 @@ function Navbar() {
     };
 
     return (
-        <div className='navbar'>
-            <MyButton onClick={handleLogout}>
-                Выйти
-            </MyButton>
-            <div className='navbar__links'>
-                <Link to='/posts'>Posts</Link>
-                <Link to='/about'>About</Link>
+        <div className="header">
+            <img src={require('./margin.png')} alt="Логотип" className="header_logo"/>
+
+
+            <nav className='header_nav'>
+                <ul className="header__list">
+                    <li className="header__list-item"><Link to='/about'>Главная</Link></li>
+                    <li className="header__list-item"><Link to='/tasks'>Задачи</Link></li>
+                    <li className="header__list-item"><Link to='/profile'>Профиль</Link></li>
+                </ul>
+            </nav>
+
+            <div className="header_button">
+                <MyButton onClick={handleLogout}>Выйти</MyButton>
             </div>
         </div>
     )
 };
 
-export default Navbar;
+export default Navbar ;

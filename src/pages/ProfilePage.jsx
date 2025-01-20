@@ -129,19 +129,20 @@ function ProfilePage() {
                                 />
                             </label>
                             <label>
+                                День рождения:
+                                <input
+                                    type="date"
+                                    name="birthday"
+                                    value={formData.birthday}
+                                    onChange={handleInputChange}
+                                />
+                            </label>
+                            <label>
                                 Место работы:
                                 <input
                                     type="text"
                                     name="work"
                                     value={formData.work}
-                                    onChange={handleInputChange}
-                                />
-                            </label>
-                            <label>
-                                Личная информация:
-                                <textarea
-                                    name="personal"
-                                    value={formData.personal}
                                     onChange={handleInputChange}
                                 />
                             </label>
@@ -155,11 +156,10 @@ function ProfilePage() {
                                 />
                             </label>
                             <label>
-                                День рождения:
-                                <input
-                                    type="date"
-                                    name="birthday"
-                                    value={formData.birthday}
+                                Личная информация:
+                                <textarea
+                                    name="personal"
+                                    value={formData.personal}
                                     onChange={handleInputChange}
                                 />
                             </label>
@@ -180,10 +180,10 @@ function ProfilePage() {
                             <p><strong>Имя:</strong> {profile.name}</p>
                             <p><strong>Фамилия:</strong> {profile.surname}</p>
                             <p><strong>Отчество:</strong> {profile.patronymic}</p>
-                            <p><strong>Место работы:</strong> {profile.work}</p>
-                            <p><strong>Личная информация:</strong> {profile.personal}</p>
-                            <p><strong>Роль:</strong> {profile.role}</p>
                             <p><strong>День рождения:</strong> {profile.birthday}</p>
+                            <p><strong>Место работы:</strong> {profile.work}</p>
+                            <p><strong>Роль:</strong> {profile.role}</p>
+                            <p><strong>Личная информация:</strong> {profile.personal}</p>
                             <button onClick={() => setIsEditing(true)}>Редактировать</button>
                         </div>
                     )}

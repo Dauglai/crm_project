@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 
 const MentionableTextarea = ({ value, onChange, mentions, setMentions }) => {
@@ -6,14 +6,27 @@ const MentionableTextarea = ({ value, onChange, mentions, setMentions }) => {
     const [query, setQuery] = useState("");
 
     useEffect(() => {
-        if (query.trim()) {
-            axios.get(`http://localhost:8000/accounts/search_profiles/?q=${query}`)
+        if (query && query.trim()) {
+            axios.get(`http://localhost:8000/accounts/search_profiles/?search=${query}`)
                 .then((response) => setProfiles(response.data.results))
                 .catch((error) => console.error("Error fetching profiles", error));
         } else {
             setProfiles([]);
         }
     }, [query]);
+
+    const handleInputChange = (e) => {
+        const newValue = e.target.value;
+        onChange(newValue);
+
+        // Проверка на наличие упоминания через @
+        const match = newValue.match(/@(\w+)$/);
+        if (match && match[1]) {
+            setQuery(match[1].toLowerCase());
+        } else {
+            setQuery(""); // Сбросить, если нет упоминания
+        }
+    };
 
     const handleMention = (profile) => {
         setMentions([...mentions, profile]);
@@ -26,11 +39,7 @@ const MentionableTextarea = ({ value, onChange, mentions, setMentions }) => {
         <div>
             <textarea
                 value={value}
-                onChange={(e) => {
-                    onChange(e.target.value);
-                    const match = e.target.value.match(/@(\w+)$/);
-                    if (match) setQuery(match[1]);
-                }}
+                onChange={handleInputChange}
                 placeholder="Введите комментарий с @ для упоминания"
             />
             {profiles.length > 0 && (
@@ -45,5 +54,3 @@ const MentionableTextarea = ({ value, onChange, mentions, setMentions }) => {
         </div>
     );
 };
-
-export default MentionableTextarea;

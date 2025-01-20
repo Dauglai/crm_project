@@ -3,19 +3,32 @@
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: #f0f2f5;
     min-height: 100vh;
+    width: 100%;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-card {
     display: flex;
+    flex-direction: column;
     gap: 20px;
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 900px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+@media (min-width: 1920px) {
+    .profile-card {
+        max-width: 1600px;
+    }
 }
 
 .profile-photo img {
@@ -28,6 +41,16 @@
 
 .profile-info {
     flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .profile-info p {
@@ -36,10 +59,12 @@
     color: #333;
 }
 
+
 .profile-form label {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    flex: 1 1 calc(50% - 20px); /* Поля занимают половину ширины с отступами */
+    min-width: 200px;
     font-size: 14px;
     color: #555;
 }
@@ -49,13 +74,13 @@
     padding: 8px;
     margin-top: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
     width: 100%;
     font-size: 14px;
 }
 
 .profile-form button {
-    padding: 10px 20px;
+    padding: 10px 15px;
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -66,4 +91,6 @@
 
 .profile-form button:hover {
     background-color: #0056b3;
+
 }
+

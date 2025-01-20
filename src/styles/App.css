@@ -4,6 +4,17 @@
     box-sizing: border-box;
 }
 
+a{
+    text-decoration: none;
+}
+
+ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
 #root {
     display: flex;
     flex-direction: column;
@@ -59,8 +70,7 @@
 }
 
 .navbar {
-    height: 50px;
-    width: 100vw;
+
     display: flex;
     align-items: center;
     padding: 0 15px;
@@ -79,4 +89,24 @@
 .clickable-name:hover {
     color: #0056b3; /* Более темный оттенок синего при наведении */
     text-decoration: none; /* Убираем подчеркивание при наведении */
+}
+
+.autocomplete-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.autocomplete-list li {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.autocomplete-list li:hover {
+    background-color: #f0f0f0;
 }

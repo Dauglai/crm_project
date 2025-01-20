@@ -40,16 +40,15 @@ function TaskIdPage() {
     }, []);
 
     const handleAddComment = async () => {
-        const mentions = newComment.match(/@\[(\d+)\]/g)?.map(match => match.replace(/[^\d]/g, ''));
 
         try {
             await axios.post(
                 `http://localhost:8000/task/${id}/comments/`,
-                { text: newComment, mentions },
                 {
+                    text: newComment,
+                }, {
                     headers: {
                         "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json",
                     },
                     withCredentials: true,
                 }
@@ -114,7 +113,7 @@ function TaskIdPage() {
                 >
                     <Mention
                         trigger="@"
-                        data={users.map(user => ({ id: user.id, display: `${user.name} ${user.surname}` }))}
+                        data={users.map(user => ({ id: user.author.id, display: `${user.name} ${user.surname}` }))}
                     />
                 </MentionsInput>
                 <button onClick={handleAddComment}>Добавить</button>
