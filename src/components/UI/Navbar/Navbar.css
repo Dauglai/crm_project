@@ -1,6 +1,11 @@
 /* Navbar.css */
 
 .header {
+ /* Закрепляет Navbar в верхней части экрана */
+    top: 0;
+    left: 0;
+    width: 100%; /* Растягивает Navbar по ширине */
+    z-index: 1000; /* Перемещает Navbar на передний план */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -8,13 +13,11 @@
     background-color: #f8f9fa; /* Светлый фон */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Легкая тень */
     font-family: 'Arial', sans-serif; /* Новый шрифт */
-    width: 100%; /* Растягиваем на всю ширину */
 }
 
 .header_logo {
     height: 50px; /* Высота логотипа */
     width: auto;
-    cursor: pointer;
 }
 
 .header_nav {
@@ -39,14 +42,10 @@
 .header__list-item a {
     text-decoration: none;
     color: #007bff; /* Цвет ссылок */
-    font-weight: bold;
-    font-size: 16px;
-    transition: color 0.3s;
 }
 
 .header__list-item a:hover {
     text-decoration: underline;
-    color: #007bff;
 }
 
 .logout-button {
@@ -63,7 +62,7 @@
     background-color: #bd2130; /* Более темный красный при наведении */
 }
 
-/* Добавим отступ под Navbar */
+/* Отступ под Navbar */
 body {
     margin: 0;
     padding: 0;
@@ -71,10 +70,7 @@ body {
 }
 
 .profile-page {
-    margin-top: 80px; /* Отступ от Navbar */
+    margin-top: 80px; /* Учитываем фиксированную высоту Navbar */
     padding: 20px;
     font-family: 'Arial', sans-serif; /* Новый шрифт */
-}
-.header_button {
-    margin-left: auto; /* Перемещает кнопку вправо */
 }

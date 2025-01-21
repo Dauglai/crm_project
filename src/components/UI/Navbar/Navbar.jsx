@@ -31,8 +31,7 @@ function Navbar() {
     return (
         <div className="header">
             <img src={require('./margin.png')} alt="Логотип" className="header_logo"/>
-
-
+            <p>MiniCRM</p>
             <nav className='header_nav'>
                 <ul className="header__list">
                     <li className="header__list-item"><Link to='/about'>Главная</Link></li>

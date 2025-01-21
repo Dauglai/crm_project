@@ -9,7 +9,7 @@ const TaskCreateForm = () => {
     const [profiles, setProfiles] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
-    const [modalField, setModalField] = useState(""); // Для определения, какой тип пользователей выбирается в данный момент
+    const [modalField, setModalField] = useState(""); // Для определения, какой тип пользователей выбирается
     const [taskData, setTaskData] = useState({
         name: '',
         deadline: '',
@@ -18,12 +18,14 @@ const TaskCreateForm = () => {
         addressee: null,
         observers: [],
         coordinators: [],
+        file: null,
     });
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const response = await axios.get('http://localhost:8000/accounts/profile/',
-                { withCredentials: true });
+            const response = await axios.get('http://localhost:8000/accounts/profile/', {
+                withCredentials: true,
+            });
             setProfiles(response.data.results);
         };
         fetchTasks();
@@ -31,10 +33,14 @@ const TaskCreateForm = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTaskData(prevData => ({
+        setTaskData((prevData) => ({
             ...prevData,
             [name]: name === "addressee" ? Number(value) : value,
         }));
+    };
+
+    const handleFileChange = (e) => {
+        setTaskData((prev) => ({ ...prev, file: e.target.files[0] }));
     };
 
     const openModal = (field) => {
@@ -44,21 +50,36 @@ const TaskCreateForm = () => {
 
     const csrfToken = document.cookie
         .split("; ")
-        .find(row => row.startsWith("csrftoken"))
+        .find((row) => row.startsWith("csrftoken"))
         ?.split("=")[1];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Создаём объект FormData
+        const formData = new FormData();
+        formData.append("name", taskData.name);
+        formData.append("deadline", taskData.deadline);
+        formData.append("description", taskData.description);
+        formData.append("status", taskData.status);
+        formData.append("addressee", taskData.addressee);
+        formData.append("file", taskData.file);
+
+        // Добавляем массивы (наблюдателей и координаторов)
+        taskData.observers.forEach((observer) => formData.append("observers", observer));
+        taskData.coordinators.forEach((coordinator) => formData.append("coordinators", coordinator));
+
         try {
-            await axios.post('http://localhost:8000/task/create/', taskData, {
+            const response = await axios.post('http://localhost:8000/task/create/', formData, {
                 headers: {
                     "X-CSRFToken": csrfToken,
-                    "Content-Type": "application/json"
+                    "Content-Type": "multipart/form-data",
                 },
-                withCredentials: true
+                withCredentials: true,
             });
-            alert("Task created successfully");
-            navigate('/tasks');
+
+            const taskId = response.data.id;
+            navigate(`/tasks/${taskId}`);
         } catch (error) {
             console.error("Error creating task:", error);
             alert("Failed to create task");
@@ -69,54 +90,63 @@ const TaskCreateForm = () => {
         <form className="task-form" onSubmit={handleSubmit}>
             <h2>Создание задачи</h2>
 
-            <label>
-                Название задачи:
-                <input
-                    type="text"
-                    name="name"
-                    value={taskData.name}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
+            <div className="form-row">
+                <label>
+                    Прикрепить файл:
+                    <input type="file" accept="*" onChange={handleFileChange}/>
+                </label>
+                <label>
+                    Название задачи:
+                    <input
+                        type="text"
+                        name="name"
+                        value={taskData.name}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
 
-            <label>
-                Ожидаемый срок выполнения:
-                <input
-                    type="date"
-                    name="deadline"
-                    value={taskData.deadline}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
+                <label>
+                    Ожидаемый срок выполнения:
+                    <input
+                        type="date"
+                        name="deadline"
+                        value={taskData.deadline}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
 
-            <label>
-                Описание:
-                <textarea
-                    name="description"
-                    value={taskData.description}
-                    onChange={handleChange}
-                />
-            </label>
+            <div className="form-block">
+                <label>
+                    Описание:
+                    <textarea
+                        name="description"
+                        value={taskData.description}
+                        onChange={handleChange}
+                    />
+                </label>
+            </div>
+            <div className="form-row">
+                <div className="form-block">
+                    <h3>Адресат</h3>
+                    <div className="selection-list">
+                        {taskData.addressee &&
+                            profiles
+                                .filter(user => user.author.id === taskData.addressee)
+                                .map(user => (
+                                    <div key={user.author.id}>
+                                        {user.surname} {user.name} {user.patronymic}
+                                    </div>
+                                ))}
+                    </div>
+                    <button type="button" onClick={() => openModal("addressee")}>
+                        Изменить адресата
+                    </button>
+                </div>
 
-            <fieldset>
-                <legend>Адресат</legend>
-                <select
-                    name="addressee"
-                    value={taskData.addressee}
-                    onChange={handleChange}
-                >
-                    <option value="">Выберите адресата</option>
-                    {profiles.map(user => (
-                        <option key={user.author.id}
-                                value={user.author.id}>{user.surname} {user.name} {user.patronymic}</option>
-                    ))}
-                </select>
-            </fieldset>
-
-            <div className="selection-block">
-                <div>
+                <div className="form-block">
                     <h3>Наблюдатели</h3>
                     <div className="selection-list">
                         {taskData.observers.map(id => {
@@ -124,10 +154,12 @@ const TaskCreateForm = () => {
                             return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
                         })}
                     </div>
-                    <button type="button" onClick={() => openModal("observers")}>Добавить наблюдателей</button>
+                    <button type="button" onClick={() => openModal("observers")}>
+                        Добавить наблюдателей
+                    </button>
                 </div>
 
-                <div>
+                <div className="form-block">
                     <h3>Координаторы</h3>
                     <div className="selection-list">
                         {taskData.coordinators.map(id => {
@@ -135,12 +167,15 @@ const TaskCreateForm = () => {
                             return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
                         })}
                     </div>
-                    <button type="button" onClick={() => openModal("coordinators")}>Добавить координаторов</button>
+                    <button type="button" onClick={() => openModal("coordinators")}>
+                        Добавить координаторов
+                    </button>
                 </div>
             </div>
 
-            <button type="submit" style={{marginTop: '20px'}}>Создать задачу</button>
 
+            {/* Кнопка */}
+            <button type="submit">Создать задачу</button>
 
             <ProfileModal visible={modalVisible} setVisible={setModalVisible}>
                 <EmployeeList
