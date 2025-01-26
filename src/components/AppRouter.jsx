@@ -8,6 +8,10 @@ import Tasks from "../pages/Tasks";
 import TaskForm from "./TaskCreateForm";
 import TaskIdPage from "../pages/TaskIdPage";
 import ProfilePage from "../pages/ProfilePage";
+import OrderForm from "../pages/OrderPage";
+import ProductManager from "../pages/ProductPage";
+import ClientManager from "../pages/ClientPage";
+import OutletManager from "../pages/OutletManager";
 
 function AppRouter() {
     const {isAuth, isLoading} = React.useContext(AuthContext);
@@ -22,6 +26,10 @@ function AppRouter() {
                 <Route path="/tasks/:id" Component={TaskIdPage}/>
                 <Route path="/about" Component={About}/>
                 <Route path="/profile" Component={ProfilePage}/>
+                <Route path="/orders" Component={OrderForm}/>
+                <Route path="/outlets" Component={OutletManager}/>
+                <Route path="/products" Component={ProductManager}/>
+                <Route path="/clients" Component={ClientManager}/>
                 <Route path="/login" Component={Login}/>
                 <Route
                     path="*"

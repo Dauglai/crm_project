@@ -1,0 +1,57 @@
+.order-form {
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.order-form h2 {
+    text-align: center;
+    color: #333;
+}
+
+.order-form .form-group {
+    margin-bottom: 15px;
+}
+
+.order-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.order-form select,
+.order-form textarea,
+.order-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.order-form .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.order-form .product-item {
+    display: flex;
+    align-items: center;
+}
+
+.order-form button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.order-form button:hover {
+    background-color: #0056b3;
+}

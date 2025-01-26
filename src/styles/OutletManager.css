@@ -1,0 +1,96 @@
+.outlet-manager {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+}
+
+.outlet-manager h2 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.outlet-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.outlet-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+.outlet-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.outlet-form input,
+.outlet-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.outlet-form button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.outlet-form button:hover {
+    background-color: #0056b3;
+}
+
+.outlet-list {
+    margin-top: 20px;
+}
+
+.outlet-list h3 {
+    margin-bottom: 10px;
+}
+
+.outlet-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.outlet-item button {
+    padding: 8px 15px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.outlet-item button:hover {
+    background-color: #0056b3;
+}
+
+.outlet-item button:last-child {
+    background-color: #dc3545;
+}
+
+.outlet-item button:last-child:hover {
+    background-color: #b21f2d;
+}

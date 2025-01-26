@@ -128,33 +128,35 @@ const TaskCreateForm = () => {
                     />
                 </label>
             </div>
+
             <div className="form-row">
                 <div className="form-block">
-                    <h3>Адресат</h3>
-                    <div className="selection-list">
-                        {taskData.addressee &&
-                            profiles
-                                .filter(user => user.author.id === taskData.addressee)
-                                .map(user => (
-                                    <div key={user.author.id}>
-                                        {user.surname} {user.name} {user.patronymic}
-                                    </div>
-                                ))}
-                    </div>
-                    <button type="button" onClick={() => openModal("addressee")}>
-                        Изменить адресата
-                    </button>
+                    <fieldset>
+                        <legend>Адресат</legend>
+                        <select
+                            name="addressee"
+                            value={taskData.addressee}
+                            onChange={handleChange}
+                        >
+                            <option value="">Выберите адресата</option>
+                            {profiles.map(user => (
+                                <option key={user.author.id} value={user.author.id}>
+                                    {user.surname} {user.name} {user.patronymic}
+                                </option>
+                            ))}
+                        </select>
+                    </fieldset>
                 </div>
 
-                <div className="form-block">
-                    <h3>Наблюдатели</h3>
-                    <div className="selection-list">
-                        {taskData.observers.map(id => {
-                            const user = profiles.find(profile => profile.author.id === id);
-                            return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
-                        })}
-                    </div>
-                    <button type="button" onClick={() => openModal("observers")}>
+            <div className="form-block">
+                <h3>Наблюдатели</h3>
+                <div className="selection-list">
+                    {taskData.observers.map(id => {
+                        const user = profiles.find(profile => profile.author.id === id);
+                        return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
+                    })}
+                </div>
+                <button type="button" onClick={() => openModal("observers")}>
                         Добавить наблюдателей
                     </button>
                 </div>
