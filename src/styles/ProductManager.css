@@ -2,7 +2,6 @@
 
 .product-manager {
     width: 90%;
-    max-width: 800px;
     margin: 20px auto;
     padding: 20px;
     background-color: #f9f9f9;
@@ -122,4 +121,30 @@
 
 .product-item button:last-child:hover {
     background-color: #b21f2d;
+}
+
+.group-list {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+}
+
+.group-item {
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.group-item.selected {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.product-section {
+    float: left;
+    width: 75%;
+    padding: 10px;
 }

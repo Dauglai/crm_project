@@ -19,7 +19,7 @@ const OutletManager = () => {
 
     const fetchOutlets = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/outlet/', {
+            const response = await axios.get('http://localhost:8000/outlets/', {
                 withCredentials: true,
             });
             setOutlets(response.data.results);
@@ -39,7 +39,7 @@ const OutletManager = () => {
         try {
             if (editingId) {
                 // Обновление Outlet
-                await axios.put(`http://localhost:8000/outlet/${editingId}/`, formData, {
+                await axios.put(`http://localhost:8000/outlets/${editingId}/`, formData, {
                     headers: {
                         'X-CSRFToken': csrfToken,
                         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ const OutletManager = () => {
                 alert('Outlet updated successfully');
             } else {
                 // Создание Outlet
-                await axios.post('http://localhost:8000/outlet/', formData, {
+                await axios.post('http://localhost:8000/outlets/', formData, {
                     headers: {
                         'X-CSRFToken': csrfToken,
                         'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const OutletManager = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:8000/outlet_delete/${id}/`, {
+            await axios.delete(`http://localhost:8000/outlets_delete/${id}/`, {
                 headers: {
                     'X-CSRFToken': csrfToken,
                 },

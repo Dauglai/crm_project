@@ -16,14 +16,14 @@ const OrderForm = () => {
         const fetchData = async () => {
             try {
                 const [productsResponse, outletsResponse, clientsResponse] = await Promise.all([
-                    axios.get("http://localhost:8000/products/"), // Замените на ваш эндпоинт
-                    axios.get("http://localhost:8000/outlets/"),  // Замените на ваш эндпоинт
-                    axios.get("http://localhost:8000/clients/"),  // Замените на ваш эндпоинт
+                    axios.get("http://localhost:8000/products/", {withCredentials: true}),
+                    axios.get("http://localhost:8000/outlets/", {withCredentials: true}),
+                    axios.get('http://localhost:8000/clients/', {withCredentials: true}),
                 ]);
 
-                setProducts(productsResponse.data);
-                setOutlets(outletsResponse.data);
-                setClients(clientsResponse.data);
+                setProducts(productsResponse.data.results);
+                setOutlets(outletsResponse.data.results);
+                setClients(clientsResponse.data.results);
             } catch (error) {
                 console.error("Ошибка при загрузке данных:", error);
             }

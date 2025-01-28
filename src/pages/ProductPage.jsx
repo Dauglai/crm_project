@@ -1,214 +1,206 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "../styles/ProductManager.css";
+import React, { useState, useEffect } from 'react';
+import ProductService from "../components/API/ProductService";
+import GroupService from "../components/API/GroupService";
+import '../styles/ProductManager.css';
+import MyModal from "../components/UI/MyModal/MyModal";
+import ProductModal from "../components/ProductManagerModal";
+import GroupModal from "../components/GroupModal";
+import '../styles/Group.css';
+import ProductFileManager from "../components/ProductFileManager";
 
-const ProductManager = () => {
+const ProductsPage = () => {
+    const productService = new ProductService('http://localhost:8000');
+    const groupService = new GroupService('http://localhost:8000');
+
     const [products, setProducts] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [selectedGroup, setSelectedGroup] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
     const [formData, setFormData] = useState({
-        group: "",
-        name: "",
-        price: "",
-        count: "",
-        article: "",
-        description: "",
+        group: '',
+        name: '',
+        price: '',
+        count: '',
+        article: '',
+        description: '',
     });
     const [editingProductId, setEditingProductId] = useState(null);
 
-    // Загрузка списка продуктов
+    const [formDataGroup, setFormDataGroup] = useState({ name: '' });
+    const [modalVisibleGroup, setModalVisibleGroup] = useState(false);
+
+    const showGroupModal = (group = null) => {
+        if (group) {
+            setSelectedGroup(group.id);
+            setFormDataGroup({name: group.name,});
+        } else {
+            setSelectedGroup(null);
+            setFormDataGroup({name: ''});
+        }
+        setModalVisibleGroup(true);
+    };
+
+    const handleEditGroup = (group) => {
+        setFormData(group);
+        setSelectedGroup(group.id);
+    };
+
+    const handleDeleteGroup = async (id) => {
+        try {
+            await groupService.deleteGroup(id);
+            loadGroups();
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+
     useEffect(() => {
-        fetchProducts();
+        loadGroups();
     }, []);
 
-    const fetchProducts = async () => {
+
+    useEffect(() => {
+        if (selectedGroup) {
+            loadProducts(selectedGroup);
+        }
+    }, [selectedGroup]);
+
+    // Загрузка продуктов по группе
+    const loadProducts = async (group) => {
         try {
-            const response = await axios.get("http://localhost:8000/products/", {
-                withCredentials: true,
-            });
-            setProducts(response.data.results);
+            const data = await productService.fetchProducts({ group });
+            setProducts(data);
         } catch (error) {
-            console.error("Ошибка при загрузке продуктов:", error);
+            console.error('Ошибка при загрузке продуктов.');
         }
     };
 
-    const csrfToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("csrftoken"))
-        ?.split("=")[1];
 
-    // Обработка изменения полей формы
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    // Загрузка групп
+    const loadGroups = async () => {
+        try {
+            const data = await groupService.fetchGroups();
+            setGroups(data);
+        } catch (error) {
+            console.error('Ошибка при загрузке групп.');
+        }
     };
 
-    // Добавление или обновление продукта
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (editingProductId) {
-                // Редактирование продукта
-                await axios.put(`http://localhost:8000/products/${editingProductId}/`, formData, {
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json"
-                    },
-                    withCredentials: true,
-                });
-                alert("Продукт успешно обновлен");
-            } else {
-                // Добавление нового продукта
-                await axios.post("http://localhost:8000/products/", formData, {
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true,
-                });
-                alert("Продукт успешно добавлен");
-            }
-            fetchProducts(); // Обновляем список продуктов
+    // Открытие модального окна для добавления или редактирования
+    const showProductModal = (product = null) => {
+        if (product) {
+            setEditingProductId(product.id);
             setFormData({
-                group: "",
-                name: "",
-                price: "",
-                count: "",
-                article: "",
-                description: "",
+                group: product.group,
+                name: product.name,
+                price: product.price,
+                count: product.count,
+                article: product.article,
+                description: product.description,
             });
+        } else {
             setEditingProductId(null);
-        } catch (error) {
-            console.error("Ошибка при сохранении продукта:", error);
-            alert("Ошибка при сохранении продукта");
+            setFormData({
+                group: selectedGroup,
+                name: '',
+                price: '',
+                count: '',
+                article: '',
+                description: '',
+            });
         }
+        setModalVisible(true);
     };
 
     // Удаление продукта
-    const handleDelete = async (productId) => {
-        if (window.confirm("Вы уверены, что хотите удалить этот продукт?")) {
-            try {
-                await axios.delete(`http://localhost:8000/products_delete/${productId}/`, {
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true,
-                });
-                alert("Продукт успешно удален");
-                fetchProducts();
-            } catch (error) {
-                console.error("Ошибка при удалении продукта:", error);
-                alert("Ошибка при удалении продукта");
+    const handleProductsDelete = async (productId) => {
+        try {
+            await productService.deleteProduct(productId);
+            if (selectedGroup) {
+                loadProducts(selectedGroup);
             }
+        } catch (error) {
+            console.error('Ошибка при удалении продукта.');
         }
-    };
-
-    // Заполнение формы для редактирования продукта
-    const handleEdit = (product) => {
-        setEditingProductId(product.id);
-        setFormData({
-            group: product.group,
-            name: product.name,
-            price: product.price,
-            count: product.count,
-            article: product.article,
-            description: product.description,
-        });
     };
 
     return (
         <div className="product-manager">
-            <h2>Управление продуктами</h2>
-
-            {/* Форма добавления/редактирования продукта */}
-            <form onSubmit={handleSubmit} className="product-form">
-                <div>
-                    <label>Группа:</label>
-                    <input
-                        type="text"
-                        name="group"
-                        value={formData.group}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Название:</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Цена:</label>
-                    <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Количество:</label>
-                    <input
-                        type="number"
-                        name="count"
-                        value={formData.count}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Артикул:</label>
-                    <input
-                        type="number"
-                        name="article"
-                        value={formData.article}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Описание:</label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <button type="submit">
-                    {editingProductId ? "Обновить продукт" : "Добавить продукт"}
-                </button>
-            </form>
-
-            {/* Список продуктов */}
-            <div className="product-list">
-                <h3>Список продуктов</h3>
-                {products.length > 0 ? (
-                    <ul>
-                        {products.map((product) => (
-                            <li key={product.id} className="product-item">
-                                <p>
-                                    <strong>{product.name}</strong> - {product.price} руб. -{" "}
-                                    {product.count} шт.
-                                </p>
-                                <p>Артикул: {product.article}</p>
-                                <p>Описание: {product.description}</p>
-                                <button onClick={() => handleEdit(product)}>Редактировать</button>
-                                <button onClick={() => handleDelete(product.id)}>Удалить</button>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Нет продуктов для отображения</p>
-                )}
+            <h2>Номенклатура</h2>
+            <div className="group-list">
+                <h3>Группы</h3>
+                <ul>
+                    {groups.map((group) => (
+                        <li
+                            key={group.id}
+                            className={`group-item ${selectedGroup === group.id ? 'selected' : ''}`}
+                            onClick={() => setSelectedGroup(group.id)}
+                        >
+                            {group.name}
+                            {/*
+                            Форма добавления/редактирования группы
+                            <button onClick={() => handleEditGroup(group)}>Редактировать</button>
+                            <button onClick={() => handleDeleteGroup(group.id)}>Удалить</button>
+                            */}
+                        </li>
+                    ))}
+                </ul>
+                <button onClick={() => showGroupModal()}>Добавить новую группу</button>
             </div>
+            <div className="product-section">
+                <div className="product-list">
+                    <ProductFileManager />
+                    <button onClick={() => showProductModal()}>Добавить новый продукт</button>
+                    {products.length > 0 ? (
+                        <ul>
+                            {products.map((product) => (
+                                <li key={product.id} className="product-item">
+                                    <p>
+                                        <strong>{product.name}</strong> - {product.price} руб. - {product.count} шт.
+                                    </p>
+                                    <p>Артикул: {product.article}</p>
+                                    <p>Описание: {product.description}</p>
+
+                                    <button onClick={() => showProductModal(product)}>Редактировать</button>
+                                    <button onClick={() => handleProductsDelete(product.id)}>Удалить</button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Нет продуктов для отображения</p>
+                    )}
+                </div>
+            </div>
+
+            {modalVisible && (
+                <MyModal visible={modalVisible} setVisible={setModalVisible}>
+                    <ProductModal
+                        formData={formData}
+                        setFormData={setFormData}
+                        editingProductId={editingProductId}
+                        setEditingProductId={setEditingProductId}
+                        closeModal={() => setModalVisible(false)}
+                        refreshProducts={() => loadProducts(selectedGroup)}
+                    />
+                </MyModal>
+            )}
+            {modalVisibleGroup && (
+                <MyModal visible={modalVisibleGroup} setVisible={setModalVisibleGroup}>
+                    <GroupModal
+                        formData={formDataGroup}
+                        setFormData={setFormDataGroup}
+                        editingGroupId={selectedGroup}
+                        setEditingGroupId={setSelectedGroup}
+                        closeModal={() => setModalVisibleGroup(false)}
+                        refreshGroups={loadGroups(selectedGroup)}
+                    />
+                </MyModal>
+            )}
+
         </div>
     );
 };
 
-export default ProductManager;
+export default ProductsPage;
