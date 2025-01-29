@@ -19,55 +19,7 @@
     color: #007bff;
 }
 
-.product-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
-}
 
-.product-form div {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.product-form label {
-    font-weight: bold;
-    color: #555;
-}
-
-.product-form input,
-.product-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.product-form input:focus,
-.product-form textarea:focus {
-    border-color: #007bff;
-}
-
-.product-form button {
-    align-self: flex-end;
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.product-form button:hover {
-    background-color: #0056b3;
-}
 
 .product-list {
     margin-top: 20px;

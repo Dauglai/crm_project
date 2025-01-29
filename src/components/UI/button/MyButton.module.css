@@ -1,8 +1,19 @@
-.myBtn{
-    padding: 5px 15px;
-    color: #007bff;
-    font-size: 14px;
-    background: transparent;
-    border: 1px #007bff;;
+.myBtn {
+    align-self: flex-end;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.myBtn:hover {
+    background-color: #0056b3;
+}
+
+.myBtn:active {
+    transform: scale(0.98);
 }

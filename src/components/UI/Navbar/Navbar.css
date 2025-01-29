@@ -74,3 +74,166 @@ body {
     padding: 20px;
     font-family: 'Arial', sans-serif; /* Новый шрифт */
 }
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    background-color: #008cba;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    width: 150px;
+    border-radius: 5px;
+}
+
+.dropdown-menu li {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Добавь этот стиль, чтобы меню отображалось, когда showDropdown === true */
+.dropdown.open .dropdown-menu {
+    display: block;
+}
+
+
+/* Side Navigation */
+.side-navigation {
+    position: absolute;
+    left: 0;
+    top: 60px; /* Adjust for Navbar height */
+    width: 250px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.side-navigation h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.side-navigation ul {
+    list-style: none;
+    padding: 0;
+}
+
+.side-navigation li {
+    margin: 5px 0;
+}
+
+.side-navigation li a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.side-navigation li a:hover {
+    text-decoration: underline;
+}
+
+/* --- Основное меню --- */
+.header {
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+/* --- Кнопка меню --- */
+.menu-button {
+    background-color: #008cba;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.menu-button:hover {
+    background-color: #0073a8;
+}
+
+.side-menu.open {
+    right: 0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 40px;
+}
+
+.side-menu li {
+    margin: 15px 0;
+}
+
+.side-menu a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 18px;
+}
+
+.side-menu a:hover {
+    text-decoration: underline;
+}
+
+.side-menu {
+
+    position: fixed;
+    top: 70px;
+    right: -100%;
+    width: 200px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease-in-out;
+    padding: 20px;
+    z-index: 1100;
+}
+
+.side-menu.open {
+    left: 0; /* Показываем меню */
+}
+.overlay.active {
+    display: block;
+}

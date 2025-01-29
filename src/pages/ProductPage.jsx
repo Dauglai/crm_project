@@ -7,11 +7,13 @@ import ProductModal from "../components/ProductManagerModal";
 import GroupModal from "../components/GroupModal";
 import '../styles/Group.css';
 import ProductFileManager from "../components/ProductFileManager";
+import MyInput from "../components/UI/input/MyInput";
+import {useTasks} from "../hooks/useTasks";
+import MyButton from "../components/UI/button/MyButton";
 
 const ProductsPage = () => {
     const productService = new ProductService('http://localhost:8000');
     const groupService = new GroupService('http://localhost:8000');
-
     const [products, setProducts] = useState([]);
     const [groups, setGroups] = useState([]);
     const [selectedGroup, setSelectedGroup] = useState(null);
@@ -25,9 +27,24 @@ const ProductsPage = () => {
         description: '',
     });
     const [editingProductId, setEditingProductId] = useState(null);
-
     const [formDataGroup, setFormDataGroup] = useState({ name: '' });
     const [modalVisibleGroup, setModalVisibleGroup] = useState(false);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState(''); // Поисковый запрос
+    const [filter, setFilter] = useState({ sort: '', query: '', role: 'all' });
+    const sortedAndSearchedProducts = useTasks(products, filter.sort, filter.query);
+
+    useEffect(() => {
+        loadGroups();
+    }, []);
+
+
+    useEffect(() => {
+        if (selectedGroup) {
+            loadProducts(selectedGroup);
+        }
+    }, [selectedGroup]);
+
 
     const showGroupModal = (group = null) => {
         if (group) {
@@ -55,17 +72,6 @@ const ProductsPage = () => {
     };
 
 
-    useEffect(() => {
-        loadGroups();
-    }, []);
-
-
-    useEffect(() => {
-        if (selectedGroup) {
-            loadProducts(selectedGroup);
-        }
-    }, [selectedGroup]);
-
     // Загрузка продуктов по группе
     const loadProducts = async (group) => {
         try {
@@ -75,8 +81,6 @@ const ProductsPage = () => {
             console.error('Ошибка при загрузке продуктов.');
         }
     };
-
-
 
     // Загрузка групп
     const loadGroups = async () => {
@@ -126,6 +130,7 @@ const ProductsPage = () => {
         }
     };
 
+
     return (
         <div className="product-manager">
             <h2>Номенклатура</h2>
@@ -147,15 +152,22 @@ const ProductsPage = () => {
                         </li>
                     ))}
                 </ul>
-                <button onClick={() => showGroupModal()}>Добавить новую группу</button>
+                <MyButton onClick={() => showGroupModal()}>Добавить новую группу</MyButton>
             </div>
             <div className="product-section">
                 <div className="product-list">
-                    <ProductFileManager />
-                    <button onClick={() => showProductModal()}>Добавить новый продукт</button>
-                    {products.length > 0 ? (
+                    <ProductFileManager/>
+                    <div className="search-bar">
+                        <MyInput
+                            value={filter.query}
+                            onChange={(e) => setFilter({...filter, query: e.target.value})}
+                            placeholder="Поиск продуктов"
+                        />
+                    </div>
+                    <MyButton onClick={() => showProductModal()}>Добавить новый продукт</MyButton>
+                    {sortedAndSearchedProducts.length > 0 ? (
                         <ul>
-                            {products.map((product) => (
+                            {sortedAndSearchedProducts.map((product) => (
                                 <li key={product.id} className="product-item">
                                     <p>
                                         <strong>{product.name}</strong> - {product.price} руб. - {product.count} шт.
