@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class ProfileService {
+class OutletService {
     constructor(baseURL) {
         this.baseURL = baseURL;
         this.csrfToken = document.cookie
@@ -18,9 +18,9 @@ class ProfileService {
     }
 
     // Получение списка продуктов
-    async fetchProfiles(filters = {}) {
+    async fetchOutlets(filters = {}) {
         try {
-            const response = await axios.get(`${this.baseURL}/accounts/profile/`, {
+            const response = await axios.get(`${this.baseURL}/outlets/`, {
                 withCredentials: true,
             });
             return response.data.results;
@@ -30,12 +30,26 @@ class ProfileService {
         }
     }
 
+    // Создание продукта
+    async createOutlet(outletData) {
+        try {
+            await axios.post(
+                `${this.baseURL}/outlets/`,
+                outletData,
+                this.configData
+            );
+        } catch (error) {
+            console.error('Ошибка при создании продукта:', error);
+            throw error;
+        }
+    }
+
     // Обновление продукта
-    async updateProfile(productId, productData) {
+    async updateOutlet(outletId, outletData) {
         try {
             await axios.put(
-                `${this.baseURL}/accounts/profile/${productId}/`,
-                productData,
+                `${this.baseURL}/outlets/${outletId}/`,
+                outletData,
                 this.configData
             );
         } catch (error) {
@@ -44,10 +58,11 @@ class ProfileService {
         }
     }
 
-    async deleteProfile(productId) {
+    // Удаление продукта
+    async deleteOutlet(outletId) {
         try {
             await axios.delete(
-                `${this.baseURL}/accounts/profile/${productId}/`,
+                `${this.baseURL}/outlets_delete/${outletId}/`,
                 this.configData
             );
         } catch (error) {
@@ -57,4 +72,4 @@ class ProfileService {
     }
 }
 
-export default ProfileService;
+export default OutletService;

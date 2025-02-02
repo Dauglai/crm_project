@@ -1,134 +1,165 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../styles/OutletManager.css'; // Стили подключите при необходимости
+import OutletService from '../components/API/OutletService';
+import RoleService from '../components/API/RoleService';
+import '../styles/OutletManager.css';
+import MyModal from '../components/UI/MyModal/MyModal';
+import OutletsFormModal from '../components/OutletsFormModal';
+import MyButton from '../components/UI/button/MyButton';
+import ProfileRoleModal from '../components/ProfileRoleModal';
 
-const OutletManager = () => {
+const OutletsManager = () => {
+    const outletService = new OutletService('http://localhost:8000');
+    const roleService = new RoleService('http://localhost:8000');
+
+    // Состояния для Outlet
     const [outlets, setOutlets] = useState([]);
-    const [formData, setFormData] = useState({ name: '', address: '' });
-    const [editingId, setEditingId] = useState(null);
+    const [selectedOutlet, setSelectedOutlet] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [editingOutlet, setEditingOutlet] = useState(null);
 
-    const csrfToken = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('csrftoken'))
-        ?.split('=')[1];
+    // Состояния для Role (назначение пользователя для Outlet)
+    const [roleModalVisible, setRoleModalVisible] = useState(false);
+    const [editingRole, setEditingRole] = useState(null);
+    const [roleFormData, setRoleFormData] = useState({
+        profile: '',
+        name: 'Продавец',
+        outlet: ''
+    });
+    const [roles, setRoles] = useState([]);
 
-    // Получение списка outlets
     useEffect(() => {
         fetchOutlets();
     }, []);
 
+    useEffect(() => {
+        if (selectedOutlet) {
+            fetchRoles(selectedOutlet.id);
+        }
+    }, [selectedOutlet]);
+
     const fetchOutlets = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/outlets/', {
-                withCredentials: true,
-            });
-            setOutlets(response.data.results);
+            const response = await outletService.fetchOutlets();
+            setOutlets(response);
         } catch (error) {
-            console.error('Error fetching outlets:', error);
+            console.error("Error fetching outlets:", error);
         }
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const fetchRoles = async (outletId) => {
         try {
-            if (editingId) {
-                // Обновление Outlet
-                await axios.put(`http://localhost:8000/outlets/${editingId}/`, formData, {
-                    headers: {
-                        'X-CSRFToken': csrfToken,
-                        'Content-Type': 'application/json',
-                    },
-                    withCredentials: true,
-                });
-                alert('Outlet updated successfully');
-            } else {
-                // Создание Outlet
-                await axios.post('http://localhost:8000/outlets/', formData, {
-                    headers: {
-                        'X-CSRFToken': csrfToken,
-                        'Content-Type': 'application/json',
-                    },
-                    withCredentials: true,
-                });
-                alert('Outlet created successfully');
-            }
-            setFormData({ name: '', address: '' });
-            setEditingId(null);
-            fetchOutlets();
+            const response = await roleService.fetchRoles(outletId);
+            setRoles(response);
         } catch (error) {
-            console.error('Error submitting outlet:', error);
-            alert('Failed to submit outlet');
+            console.error("Error fetching roles:", error);
         }
     };
 
-    const handleEdit = (outlet) => {
-        setFormData({ name: outlet.name, address: outlet.address });
-        setEditingId(outlet.id);
+    // Открытие модального окна для добавления/редактирования Outlet
+    const openOutletModal = (outlet = null) => {
+        setEditingOutlet(outlet);
+        setModalVisible(true);
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await axios.delete(`http://localhost:8000/outlets_delete/${id}/`, {
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                },
-                withCredentials: true,
+    const closeOutletModal = () => {
+        setEditingOutlet(null);
+        setModalVisible(false);
+    };
+
+    // Открытие Role-модального окна (аналог ProductPage)
+    const showRoleModal = (role = null) => {
+        if (role) {
+            setEditingRole(role);
+            setRoleFormData({
+                profile: role.worker ? role.worker.id : '',
+                name: role.name,
+                outlet: selectedOutlet ? selectedOutlet.id : ''
             });
-            alert('Outlet deleted successfully');
-            fetchOutlets();
-        } catch (error) {
-            console.error('Error deleting outlet:', error);
-            alert('Failed to delete outlet');
+        } else {
+            setEditingRole(null);
+            setRoleFormData({
+                profile: '',
+                name: 'Продавец',
+                outlet: selectedOutlet ? selectedOutlet.id : ''
+            });
         }
+        setRoleModalVisible(true);
+    };
+
+    const closeRoleModal = () => {
+        setEditingRole(null);
+        setRoleModalVisible(false);
     };
 
     return (
-        <div className="outlet-manager">
-            <h2>Outlet Manager</h2>
-            <form className="outlet-form" onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                    />
+        <div className="outlets-manager">
+            <h2>Управление Торговыми точками</h2>
+            <div className="outlets-container">
+                <div className="outlets-list">
+                    {outlets.map((outlet) => (
+                        <div
+                            key={outlet.id}
+                            className={`outlet-item ${selectedOutlet?.id === outlet.id ? 'selected' : ''}`}
+                            onClick={() => setSelectedOutlet(outlet)}
+                        >
+                            <h3>{outlet.name}</h3>
+                            <p>{outlet.address}</p>
+                        </div>
+                    ))}
+                    <MyButton onClick={() => openOutletModal()}>Добавить Outlet</MyButton>
                 </div>
-                <div>
-                    <label htmlFor="address">Address:</label>
-                    <textarea
-                        id="address"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <button type="submit">{editingId ? 'Update Outlet' : 'Create Outlet'}</button>
-            </form>
 
-            <div className="outlet-list">
-                <h3>Outlet List</h3>
-                {outlets.map((outlet) => (
-                    <div key={outlet.id} className="outlet-item">
-                        <p><strong>Name:</strong> {outlet.name}</p>
-                        <p><strong>Address:</strong> {outlet.address}</p>
-                        <button onClick={() => handleEdit(outlet)}>Edit</button>
-                        <button onClick={() => handleDelete(outlet.id)}>Delete</button>
-                    </div>
-                ))}
+                <div className="roles-section">
+                    {selectedOutlet ? (
+                        <>
+                            <h3>Роли в {selectedOutlet.name}</h3>
+                            <ul className="roles-list">
+                                {roles.map((role) => (
+                                    <li key={role.id}>
+                                        {role.worker
+                                            ? `${role.worker.surname} ${role.worker.name}`
+                                            : 'Неизвестный сотрудник'} - {role.name}
+                                    </li>
+                                ))}
+                            </ul>
+                            <MyButton className="add-role-button" onClick={() => showRoleModal()}>
+                                Добавить пользователя
+                            </MyButton>
+                        </>
+                    ) : (
+                        <p>Выберите аутлет, чтобы посмотреть роли.</p>
+                    )}
+                </div>
             </div>
+
+            {/* Модальное окно Outlet */}
+            {modalVisible && (
+                <MyModal visible={modalVisible} setVisible={setModalVisible}>
+                    <OutletsFormModal
+                        formData={editingOutlet || { name: '', address: '', admin: '', sellers: [] }}
+                        setFormData={setEditingOutlet}
+                        editingId={editingOutlet ? editingOutlet.id : null}
+                        closeModal={closeOutletModal}
+                        refreshProducts={fetchOutlets}
+                    />
+                </MyModal>
+            )}
+
+            {/* Модальное окно Role */}
+            {roleModalVisible && (
+                <MyModal visible={roleModalVisible} setVisible={setRoleModalVisible}>
+                    <ProfileRoleModal
+                        outlet={selectedOutlet}
+                        formData={roleFormData}
+                        setFormData={setRoleFormData}
+                        editingId={editingRole ? editingRole.id : null}
+                        closeModal={closeRoleModal}
+                        refreshRoles={() => fetchRoles(selectedOutlet.id)}
+                    />
+                </MyModal>
+            )}
         </div>
     );
 };
 
-export default OutletManager;
+export default OutletsManager;

@@ -29,9 +29,7 @@ const ProductsPage = () => {
     const [editingProductId, setEditingProductId] = useState(null);
     const [formDataGroup, setFormDataGroup] = useState({ name: '' });
     const [modalVisibleGroup, setModalVisibleGroup] = useState(false);
-    const [filteredProducts, setFilteredProducts] = useState([]);
-    const [searchQuery, setSearchQuery] = useState(''); // Поисковый запрос
-    const [filter, setFilter] = useState({ sort: '', query: '', role: 'all' });
+    const [filter, setFilter] = useState({ sort: '', query: '',});
     const sortedAndSearchedProducts = useTasks(products, filter.sort, filter.query);
 
     useEffect(() => {
@@ -46,16 +44,6 @@ const ProductsPage = () => {
     }, [selectedGroup]);
 
 
-    const showGroupModal = (group = null) => {
-        if (group) {
-            setSelectedGroup(group.id);
-            setFormDataGroup({name: group.name,});
-        } else {
-            setSelectedGroup(null);
-            setFormDataGroup({name: ''});
-        }
-        setModalVisibleGroup(true);
-    };
 
     const handleEditGroup = (group) => {
         setFormData(group);
@@ -71,17 +59,6 @@ const ProductsPage = () => {
         }
     };
 
-
-    // Загрузка продуктов по группе
-    const loadProducts = async (group) => {
-        try {
-            const data = await productService.fetchProducts({ group });
-            setProducts(data);
-        } catch (error) {
-            console.error('Ошибка при загрузке продуктов.');
-        }
-    };
-
     // Загрузка групп
     const loadGroups = async () => {
         try {
@@ -91,8 +68,18 @@ const ProductsPage = () => {
             console.error('Ошибка при загрузке групп.');
         }
     };
+    const showGroupModal = (group = null) => {
+        if (group) {
+            setSelectedGroup(group.id);
+            setFormDataGroup({name: group.name,});
+        } else {
+            setSelectedGroup(null);
+            setFormDataGroup({name: ''});
+        }
+        setModalVisibleGroup(true);
+    };
 
-    // Открытие модального окна для добавления или редактирования
+
     const showProductModal = (product = null) => {
         if (product) {
             setEditingProductId(product.id);
@@ -118,7 +105,16 @@ const ProductsPage = () => {
         setModalVisible(true);
     };
 
-    // Удаление продукта
+    // Загрузка продуктов по группе
+    const loadProducts = async (group) => {
+        try {
+            const data = await productService.fetchProducts({ group });
+            setProducts(data);
+        } catch (error) {
+            console.error('Ошибка при загрузке продуктов.');
+        }
+    };
+
     const handleProductsDelete = async (productId) => {
         try {
             await productService.deleteProduct(productId);

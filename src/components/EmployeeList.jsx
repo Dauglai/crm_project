@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
+import MyInput from "./UI/input/MyInput";
 
 const EmployeeList = ({ profiles, taskData, setTaskData, field }) => {
-
+    const [filter, setFilter] = useState({query: ''});
     const handleCheckboxChange = (e) => {
         const { value, checked } = e.target;
         const numValue = Number(value);
-
         setTaskData(prevData => {
             const updatedField = checked
                 ? [...(prevData[field] || []), numValue]
@@ -17,9 +17,14 @@ const EmployeeList = ({ profiles, taskData, setTaskData, field }) => {
     return (
         <div>
             <h3>Выберите {field === 'observers' ? 'наблюдателей' : 'координаторов'}</h3>
+            <MyInput
+                value={filter.query}
+                onChange={(e) => setFilter({...filter, query: e.target.value})}
+                placeholder="Поиск"
+            />
             {profiles.map(user => (
                 <label key={user.author.id}>
-                    <input
+                    <MyInput
                         type="checkbox"
                         value={user.author.id}
                         checked={(taskData[field] || []).includes(user.author.id)}

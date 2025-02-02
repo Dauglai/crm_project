@@ -9,7 +9,7 @@ const TaskCreateForm = () => {
     const [profiles, setProfiles] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
-    const [modalField, setModalField] = useState(""); // Для определения, какой тип пользователей выбирается
+    const [modalField, setModalField] = useState("");
     const [taskData, setTaskData] = useState({
         name: '',
         deadline: '',
@@ -175,10 +175,7 @@ const TaskCreateForm = () => {
                 </div>
             </div>
 
-
-            {/* Кнопка */}
             <button type="submit">Создать задачу</button>
-
             <ProfileModal visible={modalVisible} setVisible={setModalVisible}>
                 <EmployeeList
                     profiles={profiles}

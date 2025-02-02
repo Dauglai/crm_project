@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class ProfileService {
+class RoleService {
     constructor(baseURL) {
         this.baseURL = baseURL;
         this.csrfToken = document.cookie
@@ -18,9 +18,9 @@ class ProfileService {
     }
 
     // Получение списка продуктов
-    async fetchProfiles(filters = {}) {
+    async fetchRoles() {
         try {
-            const response = await axios.get(`${this.baseURL}/accounts/profile/`, {
+            const response = await axios.get(`${this.baseURL}/roles/`, {
                 withCredentials: true,
             });
             return response.data.results;
@@ -30,12 +30,26 @@ class ProfileService {
         }
     }
 
+    // Создание продукта
+    async createRole(groupData) {
+        try {
+            await axios.post(
+                `${this.baseURL}/groups/`,
+                groupData,
+                this.configData
+            );
+        } catch (error) {
+            console.error('Ошибка при создании продукта:', error);
+            throw error;
+        }
+    }
+
     // Обновление продукта
-    async updateProfile(productId, productData) {
+    async updateRole(Id, groupData) {
         try {
             await axios.put(
-                `${this.baseURL}/accounts/profile/${productId}/`,
-                productData,
+                `${this.baseURL}/roles/${Id}/`,
+                groupData,
                 this.configData
             );
         } catch (error) {
@@ -44,10 +58,11 @@ class ProfileService {
         }
     }
 
-    async deleteProfile(productId) {
+    // Удаление продукта
+    async deleteRole(Id) {
         try {
             await axios.delete(
-                `${this.baseURL}/accounts/profile/${productId}/`,
+                `${this.baseURL}/groups/${Id}/`,
                 this.configData
             );
         } catch (error) {
@@ -57,4 +72,4 @@ class ProfileService {
     }
 }
 
-export default ProfileService;
+export default RoleService;

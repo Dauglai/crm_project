@@ -12,7 +12,7 @@ function ProfilePage() {
         patronymic: "",
         work: "",
         personal: "",
-        role: "",
+        job: "",
         birthday: "",
         photo: null,
     });
@@ -31,7 +31,7 @@ function ProfilePage() {
                     patronymic: data.patronymic || "",
                     work: data.work || "",
                     personal: data.personal || "",
-                    role: data.role || "",
+                    job: data.job || "",
                     birthday: data.birthday || "",
                     photo: data.photo || null,
                 });
@@ -150,8 +150,8 @@ function ProfilePage() {
                                 Роль:
                                 <input
                                     type="text"
-                                    name="role"
-                                    value={formData.role}
+                                    name="job"
+                                    value={formData.job}
                                     onChange={handleInputChange}
                                 />
                             </label>
@@ -182,7 +182,7 @@ function ProfilePage() {
                             <p><strong>Отчество:</strong> {profile.patronymic}</p>
                             <p><strong>День рождения:</strong> {profile.birthday}</p>
                             <p><strong>Место работы:</strong> {profile.work}</p>
-                            <p><strong>Роль:</strong> {profile.role}</p>
+                            <p><strong>Роль:</strong> {profile.job}</p>
                             <p><strong>Личная информация:</strong> {profile.personal}</p>
                             <button onClick={() => setIsEditing(true)}>Редактировать</button>
                         </div>
