@@ -1,56 +1,28 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import TaskIdComment from "./TaskIdComment";
 
-const MentionableTextarea = ({ value, onChange, mentions, setMentions }) => {
+const MentionableTextarea = ({ value, onChange, recipient, setRecipient }) => {
     const [profiles, setProfiles] = useState([]);
-    const [query, setQuery] = useState("");
 
     useEffect(() => {
-        if (query && query.trim()) {
-            axios.get(`http://localhost:8000/accounts/search_profiles/?search=${query}`)
-                .then((response) => setProfiles(response.data.results))
-                .catch((error) => console.error("Error fetching profiles", error));
-        } else {
-            setProfiles([]);
-        }
-    }, [query]);
+        axios.get(`http://localhost:8000/accounts/profiles/`)
+            .then((response) => setProfiles(response.data.results))
+            .catch((error) => console.error("Error fetching profiles", error));
+    }, []);
 
-    const handleInputChange = (e) => {
-        const newValue = e.target.value;
-        onChange(newValue);
-
-        // Проверка на наличие упоминания через @
-        const match = newValue.match(/@(\w+)$/);
-        if (match && match[1]) {
-            setQuery(match[1].toLowerCase());
-        } else {
-            setQuery(""); // Сбросить, если нет упоминания
-        }
-    };
-
-    const handleMention = (profile) => {
-        setMentions([...mentions, profile]);
-        onChange(value + ` @${profile.name}`);
-        setQuery("");
-        setProfiles([]);
-    };
 
     return (
         <div>
-            <textarea
-                value={value}
-                onChange={handleInputChange}
-                placeholder="Введите комментарий с @ для упоминания"
-            />
-            {profiles.length > 0 && (
-                <ul className="autocomplete-list">
-                    {profiles.map(profile => (
-                        <li key={profile.id} onClick={() => handleMention(profile)}>
-                            {profile.name}
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder="Введите комментарий" />
+            <select onChange={(e) => setRecipient(e.target.value)}>
+                <option value="">Выберите получателя (необязательно)</option>
+                {profiles.map(profile => (
+                    <option key={profile.user.id} value={profile.user.id}>{profile.name}</option>
+                ))}
+            </select>
         </div>
     );
 };
+
+export default MentionableTextarea;

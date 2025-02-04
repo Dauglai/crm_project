@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
 import "../styles/TaskIdComment.css";
 
-const TaskIdComment = ({ comment }) => {
+const TaskIdResult = ({ comment }) => {
     return (
         <div className="comment">
             <div className="comment-header">
@@ -34,4 +34,4 @@ const TaskIdComment = ({ comment }) => {
     );
 };
 
-export default TaskIdComment;
+export default TaskIdResult;

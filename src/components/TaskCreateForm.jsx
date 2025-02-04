@@ -63,7 +63,9 @@ const TaskCreateForm = () => {
         formData.append("description", taskData.description);
         formData.append("status", taskData.status);
         formData.append("addressee", taskData.addressee);
-        formData.append("file", taskData.file);
+        if (taskData.file) {
+            formData.append("file", taskData.file);
+        }
 
         // Добавляем массивы (наблюдателей и координаторов)
         taskData.observers.forEach((observer) => formData.append("observers", observer));
