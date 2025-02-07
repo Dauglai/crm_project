@@ -17,10 +17,19 @@ export const useSortedTasks = (tasks, sort) => {
 
 export const useTasks = (tasks, sort, query) => {
     const sortedTasks = useSortedTasks(tasks, sort);
+
     const sortedAndSearchedTasks = useMemo(() => {
-        return sortedTasks.filter(task =>
-            (task.name ? task.name.toLowerCase() : '').includes(query ? query.toLowerCase() : '')
-        );
+        return sortedTasks.filter(task => {
+            const searchQuery = query ? query.toLowerCase() : "";
+
+            return (
+                (task.name && task.name.toLowerCase().includes(searchQuery)) ||
+                (task.surname && task.surname.toLowerCase().includes(searchQuery)) ||
+                (task.author && task.author.surname.toLowerCase().includes(searchQuery)) ||
+                (task.addressee && task.addressee.surname.toLowerCase().includes(searchQuery)) ||
+                (task.id && task.id.toString().includes(searchQuery))
+            );
+        });
     }, [query, sortedTasks]);
 
     return sortedAndSearchedTasks;

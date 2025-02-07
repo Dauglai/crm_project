@@ -13,7 +13,7 @@ import RoleList from "../components/UI/RoleList/RoleList";
 import TaskForm from '../components/TaskCreateForm';
 import TaskListByDay from "../components/TaskListByDay";
 
-function Tasks() {
+function TasksByDay() {
     const [tasks, setTasks] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [limit, setLimit] = useState(10);
@@ -70,24 +70,14 @@ function Tasks() {
     return (
         <div className="tasks-container">
             <div className="content-container">
-                <RoleList
-                    selectedRole={filter.role}
-                    onRoleChange={(selectedRole) => setFilter({ ...filter, role: selectedRole })}
-                />
                 <div className="table-wrapper">
                     <TaskFilter filter={filter} setFilter={setFilter} setPage={setPage} setLimit={setLimit} limit={limit} page={page} />
                     <hr style={{ margin: '15px 0' }} />
-                    <TaskTable tasks={sortedAndSearchedPosts} />
-
-                    <Pagination
-                        pagesArray={getPagesArray(totalPages)}
-                        page={page}
-                        changePage={changePage}
-                    />
+                    <TaskListByDay tasks={sortedAndSearchedPosts} />
                 </div>
             </div>
         </div>
     );
 }
 
-export default Tasks;
+export default TasksByDay;

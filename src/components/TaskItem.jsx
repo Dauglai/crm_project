@@ -32,17 +32,15 @@ const TaskItem = (props) => {
                 <td>{task.id}</td>
                 <td className="clickable-name" onClick={() => navigate("/tasks/" + task.id)}>{task.name}</td>
                 <td className="clickable-name" onClick={() => showProfileModal(task.author)}>
-                    {task.author ? `${task.author.surname} ${task.author.name} ${task.author.patronymic}` : 'Автор не указан'}
+                    {task.author ? `${task.author.surname} ${task.author.name[0]}. ${task.author.patronymic[0]}.` : 'Автор не указан'}
                 </td>
                 <td className="clickable-name" onClick={() => showProfileModal(task.addressee)}>
-                    {task.addressee ? `${task.addressee.surname} ${task.addressee.name} ${task.addressee.patronymic}` : 'Исполнитель не назначен'}
+                    {task.addressee ? `${task.addressee.surname} ${task.addressee.name[0]}. ${task.addressee.patronymic[0]}.` : 'Исполнитель не назначен'}
                 </td>
                 <td>{task.status}</td>
                 <td>{task.deadline}</td>
                 <td>{formatDateTime(task.datetime)}</td>
             </tr>
-
-            {/* Модальное окно, вынесенное за пределы <tr> */}
             {modalVisible && (
                 <ProfileModal visible={modalVisible} setVisible={setModalVisible}>
                     {modalProfile && <ProfileItem profile={modalProfile} />}

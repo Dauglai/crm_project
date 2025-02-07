@@ -4,6 +4,9 @@ import "../styles/TaskForm.css";
 import ProfileModal from "./UI/ProfileModal/ProfileModal";
 import EmployeeList from "./EmployeeList";
 import {useNavigate} from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import TaskEditor from "./TaskEditor";
 
 const TaskCreateForm = () => {
     const [profiles, setProfiles] = useState([]);
@@ -94,9 +97,21 @@ const TaskCreateForm = () => {
 
             <div className="form-row">
                 <label>
-                    Прикрепить файл:
-                    <input type="file" accept="*" onChange={handleFileChange}/>
+                    Адресат
+                    <select
+                        name="addressee"
+                        value={taskData.addressee}
+                        onChange={handleChange}
+                    >
+                        <option value="">Выберите адресата</option>
+                        {profiles.map(user => (
+                            <option key={user.author.id} value={user.author.id}>
+                                {user.surname} {user.name} {user.patronymic}
+                            </option>
+                        ))}
+                    </select>
                 </label>
+
                 <label>
                     Название задачи:
                     <input
@@ -120,45 +135,25 @@ const TaskCreateForm = () => {
                 </label>
             </div>
 
-            <div className="form-block">
-                <label>
-                    Описание:
-                    <textarea
-                        name="description"
-                        value={taskData.description}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
+            <TaskEditor taskData={taskData} setTaskData={setTaskData} />
 
             <div className="form-row">
                 <div className="form-block">
-                    <fieldset>
-                        <legend>Адресат</legend>
-                        <select
-                            name="addressee"
-                            value={taskData.addressee}
-                            onChange={handleChange}
-                        >
-                            <option value="">Выберите адресата</option>
-                            {profiles.map(user => (
-                                <option key={user.author.id} value={user.author.id}>
-                                    {user.surname} {user.name} {user.patronymic}
-                                </option>
-                            ))}
-                        </select>
-                    </fieldset>
+                    <label>
+                        Прикрепить файл:
+                        <input type="file" accept="*" onChange={handleFileChange}/>
+                    </label>
                 </div>
 
-            <div className="form-block">
-                <h3>Наблюдатели</h3>
-                <div className="selection-list">
-                    {taskData.observers.map(id => {
-                        const user = profiles.find(profile => profile.author.id === id);
-                        return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
-                    })}
-                </div>
-                <button type="button" onClick={() => openModal("observers")}>
+                <div className="form-block">
+                    <h3>Наблюдатели</h3>
+                    <div className="selection-list">
+                        {taskData.observers.map(id => {
+                            const user = profiles.find(profile => profile.author.id === id);
+                            return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
+                        })}
+                    </div>
+                    <button type="button" onClick={() => openModal("observers")}>
                         Добавить наблюдателей
                     </button>
                 </div>

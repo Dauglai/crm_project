@@ -11,7 +11,7 @@ function Navbar() {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (!event.target.closest(".dropdown")) {
+            if (!event.target.closest(".dropdown") && !event.target.closest(".tasks-menu")) {
                 setShowDropdown(false);
             }
         };
@@ -53,8 +53,19 @@ function Navbar() {
                         <li className="header__list-item">
                             <Link to="/about">Главная</Link>
                         </li>
-                        <li className="header__list-item">
+                        <li
+                            className="header__list-item tasks-menu"
+                            onMouseEnter={() => setShowDropdown(true)}
+                            onMouseLeave={() => setShowDropdown(false)}
+                        >
                             <Link to="/tasks">Задачи</Link>
+                            {showDropdown && (
+                                <ul className="dropdown">
+                                    <li><Link to="/tasks_by_day">Мои задачи по дням</Link></li>
+                                    <li><Link to="/tasks">Все задачи</Link></li>
+                                    <li><Link to="/tasks/create">Создать задачу</Link></li>
+                                </ul>
+                            )}
                         </li>
                         <li className="header__list-item">
                             <Link to="/profile">Профиль</Link>

@@ -7,6 +7,7 @@ import { MentionsInput, Mention } from 'react-mentions';
 import '../styles/TaskIdPage.css';
 import { format } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
+import ReactQuill from "react-quill";
 
 
 function TaskIdPage() {
@@ -20,7 +21,10 @@ function TaskIdPage() {
     const [userApproval, setUserApproval] = useState(null);
     const [recipient, setRecipient] = useState(null);
     const [coordinations, setCoordinations] = useState([]);
-
+    const [isAgreed, setIsAgreed] = useState(task?.is_agreed || false);
+    const isRecipient = task?.adresse?.id === userProfile?.id;
+    const isAuthor = task?.author?.id === userProfile?.id;
+    const [result, setResult] = useState(null);
 
     const [fetchTask, isLoading, error] = useFetching(async (taskId) => {
         try {
@@ -92,7 +96,7 @@ function TaskIdPage() {
             await axios.post(`http://localhost:8000/task/${id}/comments/`,
                 {
                     text: newComment,
-                    recipient: recipient.id || null, // Если не выбран — оставляем null
+                    recipient_id: recipient || null, // Если не выбран — оставляем null
                 }, {
                     headers: { "X-CSRFToken": csrfToken },
                     withCredentials: true,
@@ -105,15 +109,62 @@ function TaskIdPage() {
         }
     };
 
+    const handleSubmitResult = async () => {
+        try {
+            await axios.post(
+                `http://localhost:8000/task/${id}/result/`,
+                {
+                    description: result.description,
+                    file: result.file || null,
+                    task: task.id,
+                    author: userProfile.user.id,
+
+                },
+                {
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true
+                }
+            );
+            alert("Результат отправлен!");
+            fetchTask(id);
+        } catch (err) {
+            console.error("Ошибка отправки результата:", err);
+        }
+    };
+
+    const handleApproveResult = async (isApproved) => {
+        try {
+            await axios.patch(
+                `http://localhost:8000/task/${id}/`,
+                { is_agreed: isApproved },
+                { headers: { "X-CSRFToken": csrfToken }, withCredentials: true }
+            );
+            fetchTask(id);
+        } catch (err) {
+            console.error("Ошибка согласования результата:", err);
+        }
+    };
+
 
     return (
         <div className="task-page">
-            <h1>Задача: {task?.name}</h1>
+            <h1 className="task-title">Задача: {task?.name}</h1>
             <div className="task-details">
-                <p><strong>Описание:</strong> {task?.description}</p>
-                <p><strong>Автор:</strong> {task?.author?.surname} {task?.author?.name}</p>
-                <p><strong>Срок:</strong> {task?.deadline}</p>
-                <p><strong>Статус:</strong> {task?.status}</p>
+                <div className="task-header">
+                    <p className="task-author"><strong>Автор:</strong> {task?.author?.surname} {task?.author?.name}</p>
+                </div>
+                <div className="task-info">
+                    <p><strong>Адресат:</strong> {task?.addressee?.surname} {task?.addressee?.name}</p>
+                    <p><strong>Срок:</strong> {task?.deadline}</p>
+                    <p><strong>Статус:</strong> {task?.status}</p>
+                </div>
+                <div className="task-description">
+                    <p><strong>Описание:</strong></p>
+                    <div className="description-content">{task?.description}</div>
+                </div>
             </div>
 
             {/* Кнопки согласования */}
@@ -126,18 +177,28 @@ function TaskIdPage() {
                     ) : (
                         <>
                             <button className="approve-button" onClick={() => handleApproval(true)}>Согласовать</button>
-                            <button className="reject-button" onClick={() => handleApproval(false)}>Не согласовать</button>
+                            <button className="reject-button" onClick={() => handleApproval(false)}>Не согласовать
+                            </button>
                         </>
                     )}
                 </div>
             )}
 
+
             {/* Мини-навигация */}
             <div className="mini-navigation">
-                <button onClick={() => setActiveTab("comments")} className={activeTab === "comments" ? "active" : ""}>Комментарии</button>
-                <button onClick={() => setActiveTab("result")} className={activeTab === "result" ? "active" : ""}>Результат</button>
-                <button onClick={() => setActiveTab("approvers")} className={activeTab === "approvers" ? "active" : ""}>Список согласователей</button>
-                <button onClick={() => setActiveTab("progress")} className={activeTab === "progress" ? "active" : ""}>Ход задачи</button>
+                <button onClick={() => setActiveTab("comments")}
+                        className={activeTab === "comments" ? "active" : ""}>Комментарии
+                </button>
+                <button onClick={() => setActiveTab("result")}
+                        className={activeTab === "result" ? "active" : ""}>Результат
+                </button>
+                <button onClick={() => setActiveTab("approvers")}
+                        className={activeTab === "approvers" ? "active" : ""}>Список согласователей
+                </button>
+                <button onClick={() => setActiveTab("progress")}
+                        className={activeTab === "progress" ? "active" : ""}>Ход задачи
+                </button>
             </div>
 
             {/* Контент вкладок */}
@@ -156,10 +217,10 @@ function TaskIdPage() {
                                 onChange={(e) => setNewComment(e.target.value)}
                                 placeholder="Введите комментарий"
                             />
-                            <select onChange={(e) => setRecipient(e.target.value)}>
+                            <select onChange={(e) => setRecipient(Number(e.target.value) || null)}>
                                 <option value="">Выберите получателя (необязательно)</option>
                                 {users.map(profile => (
-                                    <option key={profile.id} value={profile.id}>{profile.name}</option>
+                                    <option key={profile.author.id} value={profile.author.id}>{profile.name}</option>
                                 ))}
                             </select>
                             <button onClick={handleAddComment}>Добавить</button>
@@ -173,11 +234,32 @@ function TaskIdPage() {
                         {task.result ? (
                             <>
                                 <p><strong>Описание:</strong> {task.result.description}</p>
-                                {task.result.file && <a href={task.result.file} target="_blank" rel="noopener noreferrer">Скачать файл</a>}
+                                {task.result.file &&
+                                    <a href={task.result.file} target="_blank" rel="noopener noreferrer">Скачать
+                                        файл</a>}
                                 <p><strong>Автор:</strong> {task.result.author.surname} {task.result.author.name}</p>
                             </>
                         ) : (
                             <p>Результат пока не добавлен</p>
+                        )}
+                        {userProfile?.id === task?.adresse?.id && (
+                            <div>
+                                <ReactQuill value={result?.description || ""}
+                                            onChange={(value) => setResult({...result, description: value})}/>
+                                <input type="file" onChange={(e) => setResult({...result, file: e.target.files[0]})}/>
+                                <button onClick={handleSubmitResult}>
+                                    {task?.result ? "Обновить результат" : "Отправить результат"}
+                                </button>
+                            </div>
+                        )}
+
+                        {userProfile?.id === task?.author?.id && task?.result && task?.status !== "Завершена" && (
+                            <div>
+                                <p>{task.result.description}</p>
+                                {task.result.file && <a href={task.result.file} download>Скачать файл</a>}
+                                <button onClick={() => handleApproveResult(true)}>Принять</button>
+                                <button onClick={() => handleApproveResult(false)}>Отклонить</button>
+                            </div>
                         )}
                     </div>
                 )}
@@ -189,7 +271,7 @@ function TaskIdPage() {
                             {task.coordination_set.length > 0 ? (
                                 task.coordination_set.map(coord => (
                                     <li key={coord.coordinator?.id || Math.random()}
-                                        style={{ color: coord.is_agreed ? "green" : "red" }}>
+                                        style={{color: coord.is_agreed ? "green" : "red"}}>
                                         {coord.coordinator
                                             ? `${coord.coordinator.surname} ${coord.coordinator.name}`
                                             : "Неизвестный пользователь"}
@@ -210,8 +292,8 @@ function TaskIdPage() {
                             progress.map((record, index) => (
                                 <p key={index}>
                                     <strong>{record.author.surname} {record.author.name[0]}.</strong> —
-                                    {format(new Date(record.datetime), "dd.MM.yyyy HH:mm", { locale: ruLocale })}
-                                    <br />
+                                    {format(new Date(record.datetime), "dd.MM.yyyy HH:mm", {locale: ruLocale})}
+                                    <br/>
                                     {record.record}
                                 </p>
                             ))
