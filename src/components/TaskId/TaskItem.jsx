@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import ProfileItem from "./ProfileItem";
-import ProfileModal from "./UI/ProfileModal/ProfileModal";
-import "../styles/App.css";
+import ProfileItem from "../ProfileItem";
+import ProfileModal from "../UI/ProfileModal/ProfileModal";
+import "../../styles/App.css";
 import {useNavigate} from "react-router-dom";
 
 const TaskItem = (props) => {

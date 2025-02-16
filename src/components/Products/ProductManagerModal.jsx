@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import ProductService from "./API/ProductService";
-import GroupService from "./API/GroupService";
-import '../styles/ProductModal.css';
+import ProductService from "../API/ProductService";
+import GroupService from "../API/GroupService";
+import '../../styles/ProductModal.css';
 
 const ProductModal = ({ formData, setFormData, editingProductId, closeModal, refreshProducts }) => {
     const productService = new ProductService('http://localhost:8000');

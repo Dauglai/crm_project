@@ -18,10 +18,11 @@ class RoleService {
     }
 
     // Получение списка продуктов
-    async fetchRoles() {
+    async fetchRoles(filters = {}) {
         try {
             const response = await axios.get(`${this.baseURL}/roles/`, {
                 withCredentials: true,
+                params: {outlet: filters.outlet},
             });
             return response.data.results;
         } catch (error) {
@@ -34,7 +35,7 @@ class RoleService {
     async createRole(groupData) {
         try {
             await axios.post(
-                `${this.baseURL}/groups/`,
+                `${this.baseURL}/roles/`,
                 groupData,
                 this.configData
             );
@@ -62,7 +63,7 @@ class RoleService {
     async deleteRole(Id) {
         try {
             await axios.delete(
-                `${this.baseURL}/groups/${Id}/`,
+                `${this.baseURL}/roles/${Id}/`,
                 this.configData
             );
         } catch (error) {

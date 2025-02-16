@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import TaskIdComment from "./TaskIdComment";
+import TaskIdComment from "./TaskId/TaskIdComment";
 
 const MentionableTextarea = ({ value, onChange, recipient, setRecipient }) => {
     const [profiles, setProfiles] = useState([]);

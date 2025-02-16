@@ -1,8 +1,8 @@
 // TaskTable.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/tableStyles.css';
-import TaskItem from "./TaskItem";
+import '../../styles/tableStyles.css';
+import TaskItem from "../TaskId/TaskItem";
 
 const TaskTable = ({tasks, error}) => {
     if (error) return <p>{error}</p>;

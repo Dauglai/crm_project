@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import ProductService from "../components/API/ProductService";
-import GroupService from "../components/API/GroupService";
-import '../styles/ProductManager.css';
-import MyModal from "../components/UI/MyModal/MyModal";
-import ProductModal from "../components/ProductManagerModal";
-import GroupModal from "../components/GroupModal";
-import '../styles/Group.css';
-import ProductFileManager from "../components/ProductFileManager";
-import MyInput from "../components/UI/input/MyInput";
-import {useTasks} from "../hooks/useTasks";
-import MyButton from "../components/UI/button/MyButton";
+import ProductService from "../../components/API/ProductService";
+import GroupService from "../../components/API/GroupService";
+import './ProductManager.css';
+import MyModal from "../../components/UI/MyModal/MyModal";
+import ProductModal from "../../components/Products/ProductManagerModal";
+import GroupModal from "../../components/Groups/GroupModal";
+import '../../styles/Group.css';
+import ProductFileManager from "../../components/ProductFileManager";
+import MyInput from "../../components/UI/input/MyInput";
+import {useTasks} from "../../hooks/useTasks";
+import MyButton from "../../components/UI/button/MyButton";
 
 const ProductsPage = () => {
     const productService = new ProductService('http://localhost:8000');

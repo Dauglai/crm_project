@@ -1,50 +1,75 @@
-.task-list-by-day {
+.task-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
 }
 
-.task-day {
+.task-day-column {
     background: #fff;
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.task-day h3 {
+.task-day-column h3 {
     text-align: center;
     margin-bottom: 10px;
     font-size: 18px;
     color: #333;
+    font-weight: bold;
 }
 
-.task-card {
+.task-card-column {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 10px;
     border-radius: 5px;
     background: #f8f9fa;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
     cursor: pointer;
+    transition: transform 0.2s ease-in-out;
 }
 
-.task-card h4 {
-    font-size: 16px;
-    margin-bottom: 5px;
+.task-card-column:hover {
+    transform: scale(1.05);
 }
 
-.task-card p {
+.task-left {
+    width: 15%;
+    text-align: left;
+}
+
+.task-time {
     font-size: 14px;
-    color: #555;
+    color: #333;
 }
 
-.status {
+.task-id {
+    font-size: 12px;
+    color: #888;
+}
+
+.task-center {
+    width: 60%;
+    text-align: center;
+}
+
+.task-center h4 {
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.task-status {
     display: inline-block;
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 12px;
     font-weight: bold;
-    margin-top: 5px;
+    background-color: #007bff;
+    color: white;
 }
 
 .status.выполнена {
@@ -60,6 +85,22 @@
 .status.отменена {
     background-color: #dc3545;
     color: white;
+}
+
+.task-right {
+    width: 25%;
+    text-align: right;
+}
+
+.task-user {
+    font-size: 14px;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.task-user:hover {
+    color: #0056b3;
 }
 
 .no-tasks {

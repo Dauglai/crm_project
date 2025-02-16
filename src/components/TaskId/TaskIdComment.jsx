@@ -1,7 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
-import "../styles/TaskIdComment.css";
+import "../../styles/TaskIdComment.css";
 
 const TaskIdComment = ({ comment }) => {
     return (

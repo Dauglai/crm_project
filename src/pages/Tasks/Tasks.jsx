@@ -1,17 +1,16 @@
 // Tasks.js
 import React, { useEffect, useState } from 'react';
-import TaskTable from "../components/TaskTable";
-import Pagination from '../components/UI/pagination/Pagination';
-import MySelect from "../components/UI/select/MySelect";
+import TaskTable from "../../components/Tasks/TaskTable";
+import Pagination from '../../components/UI/pagination/Pagination';
+import MySelect from "../../components/UI/select/MySelect";
 import axios from "axios";
-import { getPageCount, getPagesArray } from '../utils/pages';
-import Loader from '../components/UI/Loader/Loader';
-import TaskFilter from "../components/TaskFilter";
-import { useTasks } from "../hooks/useTasks";
-import '../styles/Tasks.css';
-import RoleList from "../components/UI/RoleList/RoleList";
-import TaskForm from '../components/TaskCreateForm';
-import TaskListByDay from "../components/TaskListByDay";
+import { getPageCount, getPagesArray } from '../../utils/pages';
+import Loader from '../../components/UI/Loader/Loader';
+import TaskFilter from "../../components/TaskCRUD/TaskFilter";
+import { useTasks } from "../../hooks/useTasks";
+import './Tasks.css';
+import RoleList from "../../components/UI/RoleList/RoleList";
+
 
 function Tasks() {
     const [tasks, setTasks] = useState([]);

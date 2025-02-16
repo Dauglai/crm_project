@@ -310,3 +310,16 @@ body {
     pointer-events: all;
     display: block;
 }
+
+.nav-icons {
+    position: relative;
+}
+
+.notification-icon {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+

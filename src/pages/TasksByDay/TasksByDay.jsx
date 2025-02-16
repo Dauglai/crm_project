@@ -1,17 +1,11 @@
-// Tasks.js
 import React, { useEffect, useState } from 'react';
-import TaskTable from "../components/TaskTable";
-import Pagination from '../components/UI/pagination/Pagination';
-import MySelect from "../components/UI/select/MySelect";
+import TaskFilter from "../../components/TaskCRUD/TaskFilter";
 import axios from "axios";
-import { getPageCount, getPagesArray } from '../utils/pages';
-import Loader from '../components/UI/Loader/Loader';
-import TaskFilter from "../components/TaskFilter";
-import { useTasks } from "../hooks/useTasks";
-import '../styles/Tasks.css';
-import RoleList from "../components/UI/RoleList/RoleList";
-import TaskForm from '../components/TaskCreateForm';
-import TaskListByDay from "../components/TaskListByDay";
+import { getPageCount } from '../../utils/pages';
+import { useTasks } from "../../hooks/useTasks";
+import '../Tasks/Tasks.css';
+import TaskListByDay from "../../components/TaskId/TaskListByDay";
+import TaskListColumn from "../../components/TaskId/TaskListColumn";
 
 function TasksByDay() {
     const [tasks, setTasks] = useState([]);
@@ -19,20 +13,10 @@ function TasksByDay() {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    const [filter, setFilter] = useState({ sort: '', query: '', role: 'all' });
-    const sortedAndSearchedPosts = useTasks(tasks, filter.sort, filter.query);
+    const [filter, setFilter] = useState({ sort: 'status', query: '', role: 'addressee' });
+    const [viewMode, setViewMode] = useState('column'); // "column" | "list"
 
-    const handleAccept = async (notifId) => {
-        await axios.post(`/notifications/${notifId}/`, { action: 'accept' });
-    };
-
-    const handleDismiss = async (notifId) => {
-        await axios.post(`/notifications/${notifId}/`, { action: 'dismiss' });
-    };
-
-    const handleTaskCreated = (newTask) => {
-        setTasks([...tasks, newTask]);
-    };
+    const sortedAndSearchedTasks = useTasks(tasks, filter.sort, filter.query);
 
     const fetchTasks = async () => {
         setIsLoading(true);
@@ -48,8 +32,7 @@ function TasksByDay() {
                 withCredentials: true,
             });
             setTasks(response.data.results);
-            const totalCount = response.data.count;
-            setTotalPages(getPageCount(totalCount, limit));
+            setTotalPages(getPageCount(response.data.count, limit));
         } catch (err) {
             console.error('Failed to load tasks:', err);
         } finally {
@@ -61,19 +44,27 @@ function TasksByDay() {
         fetchTasks();
     }, [page, limit, filter]);
 
-    const changePage = (page) => {
-        setPage(page);
-    };
-
-
-
     return (
         <div className="tasks-container">
             <div className="content-container">
                 <div className="table-wrapper">
                     <TaskFilter filter={filter} setFilter={setFilter} setPage={setPage} setLimit={setLimit} limit={limit} page={page} />
                     <hr style={{ margin: '15px 0' }} />
-                    <TaskListByDay tasks={sortedAndSearchedPosts} />
+
+                    {/* Кнопка переключения вида */}
+                    <button
+                        className="view-toggle-btn"
+                        onClick={() => setViewMode(viewMode === "column" ? "list" : "column")}
+                    >
+                        {viewMode === "column" ? "Переключить на список" : "Переключить на колонки"}
+                    </button>
+
+                    {/* Отображение задач в зависимости от режима */}
+                    {viewMode === "column" ? (
+                        <TaskListColumn tasks={sortedAndSearchedTasks} />
+                    ) : (
+                        <TaskListByDay tasks={sortedAndSearchedTasks} />
+                    )}
                 </div>
             </div>
         </div>

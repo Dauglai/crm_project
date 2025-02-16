@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../../../context";
 import MyButton from "../button/MyButton";
 import "./Navbar.css";
+import NotificationDropdown from "../../NotificationDropDown";
 
 function Navbar() {
     const { isAuth, setIsAuth } = useContext(AuthContext);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -73,6 +75,13 @@ function Navbar() {
                     </ul>
                 </div>
 
+                <div className="nav-icons">
+                    <button className="notification-icon" onClick={() => setDropdownVisible(!dropdownVisible)}>
+                        🔔
+                    </button>
+                    {dropdownVisible && <NotificationDropdown/>}
+                </div>
+
                 <div className="header_button">
                     <MyButton onClick={handleLogout}>Выйти</MyButton>
                 </div>
@@ -83,7 +92,7 @@ function Navbar() {
                 <button className="close-button" onClick={() => setShowMenu(false)}>×</button>
                 <ul>
                     <li><Link to="/products">Номенклатура</Link></li>
-                    <li><Link to="/catalog">Каталог</Link></li>
+                    <li><Link to="/outlets">Торговые точки</Link></li>
                     <li><Link to="/settings">Настройки</Link></li>
                 </ul>
             </div>

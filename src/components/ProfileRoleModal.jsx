@@ -4,39 +4,39 @@ import MyButton from '../components/UI/button/MyButton';
 import axios from "axios";
 import RoleService from '../components/API/RoleService';
 
-const ProfileRoleModal = ({ visible, setVisible, outlet, refreshRoles, closeModal }) => {
+const ProfileRoleModal = ({ outlets, formData, setFormData, editingId, closeModal, refreshRoles }) => {
     const [profiles, setProfiles] = useState([]);
     const [selectedProfile, setSelectedProfile] = useState('');
     const [selectedRole, setSelectedRole] = useState('Продавец');
     const roleService = new RoleService('http://localhost:8000');
 
-    useEffect(() => {
-        if (visible) {
-            fetchProfiles();
-        }
-    }, [visible]);
 
-    const fetchProfiles = async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/accounts/profile/', {
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            const response = await axios.get('http://localhost:8000/accounts/search_profiles/', {
                 withCredentials: true,
             });
             setProfiles(response.data.results);
-        } catch (error) {
-            console.error("Ошибка загрузки пользователей", error);
-        }
+        };
+        fetchTasks();
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    const handleSave = async () => {
-        if (!selectedProfile || !outlet) return;
+
+    const handleSave = async (e) => {
+        e.preventDefault();
         try {
-            await roleService.createRole({
-                profile: selectedProfile,
-                outlet: outlet.id,
-                name: selectedRole,
-            });
+            if (editingId) {
+                await roleService.updateRole(editingId, formData);
+            } else {
+                await roleService.createRole(formData);
+            }
             refreshRoles();
-            setVisible(false);
             closeModal();
         } catch (error) {
             console.error("Ошибка сохранения роли", error);
@@ -44,37 +44,58 @@ const ProfileRoleModal = ({ visible, setVisible, outlet, refreshRoles, closeModa
     };
 
     return (
-        <MyModal visible={visible} setVisible={setVisible}>
+        <form className="modal-overlay">
             <h3>Назначить роль</h3>
             <div className="form-group">
-                <label>Выберите пользователя:</label>
+                <label>Выберите торговую точку:</label>
                 <select
-                    value={selectedProfile}
-                    onChange={(e) => setSelectedProfile(e.target.value)}
+                    name="outlet"
+                    value={formData.outlet || ''}
+                    onChange={handleInputChange}
                 >
+                    <option value="">Выберите торговую точку</option>
+                    {outlets.length > 0 ? (
+                        outlets.map(outlet => (
+                            <option key={outlet.id} value={outlet.id}>
+                                {outlet.name}
+                            </option>
+                        ))
+                    ) : (
+                        <option disabled>Загрузка...</option>
+                    )}
+                </select>
+            </div>
+            <div className="form-group">
+                <label>Выберите пользователя:</label>
+                <select name="profile" value={formData.profile} onChange={handleInputChange}>
                     <option value="">Выберите пользователя</option>
-                    {profiles.map(profile => (
-                        <option key={profile.id} value={profile.id}>
-                            {profile.surname} {profile.name} {profile.patronymic}
-                        </option>
-                    ))}
+                    {profiles.length > 0 ? (
+                        profiles.map(profile => (
+                            <option key={profile.author.id} value={profile.author.id}>
+                                {profile.surname} {profile.name} {profile.patronymic}
+                            </option>
+                        ))
+                    ) : (
+                        <option disabled>Загрузка...</option>
+                    )}
                 </select>
             </div>
             <div className="form-group">
                 <label>Роль:</label>
                 <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                 >
                     <option value="Продавец">Продавец</option>
                     <option value="Администратор">Администратор</option>
                 </select>
             </div>
-            <div className="form-buttons" style={{ justifyContent: 'space-between' }}>
-                <MyButton onClick={handleSave}>Сохранить</MyButton>
-                <MyButton className="cancel-button" onClick={() => setVisible(false)}>Отмена</MyButton>
+            <div className="form-buttons" style={{justifyContent: 'space-between'}}>
+                <MyButton onClick={handleSave}>{editingId ? "Обновить" : "Добавить"}</MyButton>
+                <MyButton className="cancel-button" onClick={closeModal}>Отмена</MyButton>
             </div>
-        </MyModal>
+        </form>
     );
 };
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/TaskForm.css";
-import ProfileModal from "./UI/ProfileModal/ProfileModal";
-import EmployeeList from "./EmployeeList";
+import "../../styles/TaskForm.css";
+import ProfileModal from "../UI/ProfileModal/ProfileModal";
+import EmployeeList from "../EmployeeList";
 import {useNavigate} from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -26,7 +26,7 @@ const TaskCreateForm = () => {
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const response = await axios.get('http://localhost:8000/accounts/profile/', {
+            const response = await axios.get('http://localhost:8000/accounts/search_profiles/', {
                 withCredentials: true,
             });
             setProfiles(response.data.results);

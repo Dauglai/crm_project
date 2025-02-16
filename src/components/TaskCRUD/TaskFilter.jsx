@@ -1,9 +1,9 @@
 // TaskFilter.js
 import React from "react";
-import MyInput from "./UI/input/MyInput";
-import MySelect from "./UI/select/MySelect";
-import RoleList from "./UI/RoleList/RoleList";
-import '../styles/Tasks.css'; // Подключаем стили
+import MyInput from "../UI/input/MyInput";
+import MySelect from "../UI/select/MySelect";
+import RoleList from "../UI/RoleList/RoleList";
+import '../../pages/Tasks/Tasks.css'; // Подключаем стили
 
 const TaskFilter = ({ filter, setFilter, limit, setLimit, setPage }) => {
     return (

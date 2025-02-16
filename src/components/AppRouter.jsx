@@ -4,15 +4,15 @@ import About from "../pages/About";
 import Login from "../pages/Login";
 import { AuthContext } from "../context";
 import Loader from "./UI/Loader/Loader";
-import Tasks from "../pages/Tasks";
-import TaskForm from "./TaskCreateForm";
-import TaskIdPage from "../pages/TaskIdPage";
-import ProfilePage from "../pages/ProfilePage";
-import OrderForm from "../pages/OrderPage";
-import ProductManager from "../pages/ProductPage";
-import ClientManager from "../pages/ClientPage";
-import OutletManager from "../pages/OutletManager";
-import TasksByDay from "../pages/TasksByDay";
+import Tasks from "../pages/Tasks/Tasks";
+import TaskForm from "./TaskCRUD/TaskCreateForm";
+import TaskIdPage from "../pages/TaskId/TaskIdPage";
+import ProfilePage from "../pages/Profile/ProfilePage";
+import OrderForm from "../pages/Order/OrderPage";
+import ProductManager from "../pages/Product/ProductPage";
+import ClientManager from "../pages/Client/ClientPage";
+import OutletManager from "../pages/Outlet/OutletManager";
+import TasksByDay from "../pages/TasksByDay/TasksByDay";
 import ProtectedRoute from "./API/ProtectedRoute";
 
 

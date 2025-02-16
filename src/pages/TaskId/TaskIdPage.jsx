@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useFetching from "../hooks/useFetching";
+import useFetching from "../../hooks/useFetching";
 import axios from "axios";
-import TaskIdComment from "../components/TaskIdComment";
+import TaskIdComment from "../../components/TaskId/TaskIdComment";
 import { MentionsInput, Mention } from 'react-mentions';
-import '../styles/TaskIdPage.css';
+import './TaskIdPage.css';
 import { format } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
 import ReactQuill from "react-quill";

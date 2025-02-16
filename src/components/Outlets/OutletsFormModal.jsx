@@ -1,38 +1,13 @@
 import React, { useEffect, useState } from "react";
-import ProductService from "./API/ProductService";
-import GroupService from "./API/GroupService";
-import '../styles/ProductModal.css';
-import OutletService from "./API/OutletService";
-import {useNavigate} from "react-router-dom";
-import axios from "axios";
-import ProfileModal from "./UI/ProfileModal/ProfileModal";
-import EmployeeList from "./EmployeeList";
+import '../../styles/ProductModal.css';
+import OutletService from "../API/OutletService";
 
 
 const OutletModal = ({ formData, setFormData, editingId, closeModal, refreshProducts }) => {
-    const [profiles, setProfiles] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalField, setModalField] = useState("");
     const outletService = new OutletService('http://localhost:8000');
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-
-    useEffect(() => {
-        const fetchTasks = async () => {
-            const response = await axios.get('http://localhost:8000/accounts/profile/', {
-                withCredentials: true,
-            });
-            setProfiles(response.data.results);
-        };
-        fetchTasks();
-    }, []);
-
-    const openModal = (field) => {
-        setModalField(field);
-        setModalVisible(true);
     };
 
     const handleSubmit = async (e) => {
@@ -71,15 +46,6 @@ const OutletModal = ({ formData, setFormData, editingId, closeModal, refreshProd
                     <button type="button" className="cancel-button" onClick={closeModal}>Отмена</button>
                 </div>
             </form>
-
-            <ProfileModal visible={modalVisible} setVisible={setModalVisible}>
-            <EmployeeList
-                    profiles={profiles}
-                    taskData={formData}
-                    setTaskData={setFormData}
-                    field={modalField}
-                />
-            </ProfileModal>
         </div>
     );
 };

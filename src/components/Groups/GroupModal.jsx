@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import GroupService from "./API/GroupService";
-import '../styles/Group.css';
+import GroupService from "../API/GroupService";
+import '../../styles/Group.css';
 
 const GroupModal = ({ formData, setFormData, editingGroupId, setEditingGroupId, closeModal, refreshGroups }) => {
     const groupService = new GroupService('http://localhost:8000');

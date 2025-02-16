@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/ClientManager.css'; // Стили подключите при необходимости
+import './ClientManager.css'; // Стили подключите при необходимости
 
 const ClientManager = () => {
     const [clients, setClients] = useState([]);

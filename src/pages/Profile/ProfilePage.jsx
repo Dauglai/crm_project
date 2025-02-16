@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/ProfilePage.css";
-import {getPageCount} from "../utils/pages";
+import "./ProfilePage.css";
+import {getPageCount} from "../../utils/pages";
 
 function ProfilePage() {
     const [profile, setProfile] = useState(null);
@@ -22,7 +22,7 @@ function ProfilePage() {
             const response = await axios.get("http://localhost:8000/accounts/profile/", {
                 withCredentials: true,
             });
-            const data = response.data.results[0]; // Берем первый профиль из массива
+            const data = response.data.results[0]; //первый профиль из массива
             if (data) {
                 setProfile(data);
                 setFormData({
@@ -63,7 +63,9 @@ function ProfilePage() {
     const handleSave = () => {
         const form = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
-            form.append(key, value);
+            if (value) {
+                form.append(key, value);
+            }
         });
 
         axios
@@ -101,6 +103,23 @@ function ProfilePage() {
                 <div className="profile-info">
                     {isEditing ? (
                         <form className="profile-form">
+                            <label>
+                                Email:
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                />
+                            </label>
+                            <label>
+                                Новый пароль:
+                                <input
+                                    type="password"
+                                    name="password"
+                                    onChange={handleInputChange}
+                                />
+                            </label>
                             <label>
                                 Имя:
                                 <input
