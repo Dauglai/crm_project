@@ -1,44 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import MyInput from "./UI/input/MyInput";
+import "../styles/EmployeeList.css";
 
 const EmployeeList = ({ profiles = [], taskData, setTaskData, field }) => {
-    const [filter, setFilter] = useState({ query: '' });
+    const [filter, setFilter] = useState("");
 
-    const handleCheckboxChange = (e) => {
-        const { value, checked } = e.target;
-        const numValue = Number(value);
-        setTaskData(prevData => {
-            const updatedField = checked
-                ? [...(prevData[field] || []), numValue]
-                : (prevData[field] || []).filter(item => item !== numValue);
+    // Фильтрация списка по фамилии, имени или отчеству
+    const filteredProfiles = profiles.filter(user => {
+        const fullName = `${user.surname} ${user.name} ${user.patronymic}`.toLowerCase();
+        return fullName.includes(filter.toLowerCase());
+    });
+
+    // Обработчик выбора сотрудника
+    const handleSelect = (userId) => {
+        setTaskData((prevData) => {
+            const isSelected = (prevData[field] || []).includes(userId);
+            const updatedField = isSelected
+                ? prevData[field].filter(id => id !== userId)
+                : [...(prevData[field] || []), userId];
             return { ...prevData, [field]: updatedField };
         });
     };
 
     return (
-        <div>
-            <h3>Выберите {field === 'observers' ? 'наблюдателей' : 'координаторов'}</h3>
+        <div className="employee-list">
+            <h3>Выберите {field === "observers" ? "наблюдателей"  : "coordinators" ? "координаторов": "адресата"}</h3>
             <MyInput
-                value={filter.query}
-                onChange={(e) => setFilter({ ...filter, query: e.target.value })}
-                placeholder="Поиск"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Поиск по ФИО"
+                className="search-input"
             />
-            {profiles.length > 0 ? (
-                profiles.map(user => (
-                    user.author ? (
-                        <label key={user.author.id}>
-                            <MyInput
-                                type="checkbox"
-                                value={user.author.id}
-                                checked={(taskData[field] || []).includes(user.author.id)}
-                                onChange={handleCheckboxChange}
-                            />
-                            {user.surname} {user.name} {user.patronymic}
-                        </label>
-                    ) : null
-                ))
+            {filteredProfiles.length > 0 ? (
+                <div className="employee-container">
+                    {filteredProfiles.map(user =>
+                        user.author ? (
+                            <div
+                                key={user.author.id}
+                                className={`employee-item ${taskData[field]?.includes(user.author.id) ? "selected" : ""}`}
+                                onClick={() => handleSelect(user.author.id)}
+                            >
+                                <img src={user.photo || "/default-avatar.png"} alt="Фото" className="employee-photo" />
+                                <span className="employee-name">
+                                    {user.surname} {user.name} {user.patronymic}
+                                </span>
+                            </div>
+                        ) : null
+                    )}
+                </div>
             ) : (
-                <p>Нет доступных сотрудников</p>
+                <p className="no-employees">Нет доступных сотрудников</p>
             )}
         </div>
     );

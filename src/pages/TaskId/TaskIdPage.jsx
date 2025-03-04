@@ -152,20 +152,20 @@ function TaskIdPage() {
     return (
         <div className="task-page">
             <h1 className="task-title">Задача: {task?.name}</h1>
-            <div className="task-details">
-                <div className="task-header">
-                    <p className="task-author"><strong>Автор:</strong> {task?.author?.surname} {task?.author?.name}</p>
+
+            {/* Блоки "Автор" и "Адресат" в строку */}
+            <div className="form-block full-width">
+                <div className="row">
+                        <p><strong>Автор:</strong> {task?.author?.surname} {task?.author?.name}</p>
+                        <p><strong>Адресат:</strong> {task?.addressee?.surname} {task?.addressee?.name}</p>
+                        <p><strong>Срок:</strong> {task?.deadline}</p>
+                        <p><strong>Статус:</strong> {task?.status}</p>
                 </div>
-                <div className="task-info">
-                    <p><strong>Адресат:</strong> {task?.addressee?.surname} {task?.addressee?.name}</p>
-                    <p><strong>Срок:</strong> {task?.deadline}</p>
-                    <p><strong>Статус:</strong> {task?.status}</p>
-                </div>
-                <div className="task-description">
-                    <p><strong>Описание:</strong></p>
-                    <div className="description-content">{task?.description}</div>
-                </div>
+
+                <p><strong>Описание:</strong></p>
+                <div className="description-content" dangerouslySetInnerHTML={{ __html: task?.description }} />
             </div>
+
 
             {/* Кнопки согласования */}
             {task?.coordinators?.some(coord => coord.id === userProfile?.id) && (

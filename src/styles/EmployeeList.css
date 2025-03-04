@@ -1,0 +1,60 @@
+.employee-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.employee-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 300px; /* Ограничение высоты */
+    overflow-y: auto; /* Прокрутка */
+    padding-right: 5px;
+}
+
+.employee-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.employee-item:hover {
+    background: #f5f5f5;
+}
+
+.selected {
+    background: #999; /* Цвет Nepal */
+}
+
+.employee-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Делаем фото круглым */
+    object-fit: cover;
+}
+
+.employee-name {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-employees {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}

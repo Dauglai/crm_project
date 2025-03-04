@@ -1,0 +1,108 @@
+.order-detail-page {
+    width: 90%;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
+
+.order-detail-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.order-task-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Когда экран разделён, используем flex-ряд */
+.order-task-container.split {
+    flex-direction: row;
+    gap: 20px;
+}
+
+.order-section,
+.task-section {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.order-section h2,
+.task-section h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.order-items ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.order-items li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.toggle-split {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.toggle-split button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.task-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+}
+
+.task-search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.task-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 300px; /* Ограничение высоты */
+    overflow-y: auto; /* Прокрутка */
+    padding-right: 5px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.task-item:hover {
+    background: #f5f5f5;
+}
+
+.selected-task {
+    background: #999; /* Цвет Nepal */
+}
+
+.no-tasks {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}

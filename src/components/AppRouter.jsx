@@ -8,12 +8,13 @@ import Tasks from "../pages/Tasks/Tasks";
 import TaskForm from "./TaskCRUD/TaskCreateForm";
 import TaskIdPage from "../pages/TaskId/TaskIdPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
-import OrderForm from "../pages/Order/OrderPage";
+import OrderForm from "../pages/Order/OrderForm";
 import ProductManager from "../pages/Product/ProductPage";
 import ClientManager from "../pages/Client/ClientPage";
 import OutletManager from "../pages/Outlet/OutletManager";
 import TasksByDay from "../pages/TasksByDay/TasksByDay";
 import ProtectedRoute from "./API/ProtectedRoute";
+import OrderDetailPage from "../pages/OrderDetail/OrderDetailPage";
 
 
 function AppRouter() {
@@ -44,8 +45,7 @@ function AppRouter() {
             />
             <Route
                 path="/tasks/:id"
-                element={<ProtectedRoute><TaskIdPage /></ProtectedRoute>}
-            />
+                element={<ProtectedRoute><TaskIdPage /></ProtectedRoute>} />
             <Route
                 path="/about"
                 element={<ProtectedRoute><About /></ProtectedRoute>}
@@ -55,8 +55,12 @@ function AppRouter() {
                 element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
             />
             <Route
-                path="/orders"
+                path="/orders/create"
                 element={<ProtectedRoute><OrderForm /></ProtectedRoute>}
+            />
+            <Route
+                path="/orders/:orderId"
+                element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>}
             />
             <Route
                 path="/outlets"

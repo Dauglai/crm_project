@@ -31,7 +31,6 @@
     padding: 0;
     display: flex;
     justify-content: center;
-    gap: 20px;
 }
 
 .header_nav ul {
@@ -101,24 +100,23 @@ body {
     width: 180px;
     display: flex; /* Используем flexbox */
     flex-direction: column; /* Располагаем элементы в колонку */
-    padding: 10px 0;
+    list-style: none;
+    padding-left: 15px;
 }
 
 .dropdown li {
-    padding: 10px;
+    padding: 8px;
     white-space: nowrap;
 }
 
 .dropdown li a {
-    color: black;
+    color: white;
     text-decoration: none;
     display: block;
-    width: 100%;
-    padding: 10px 15px;
 }
 
-.dropdown li:hover {
-    background: #ecf0f1;
+.dropdown li a:hover {
+    text-decoration: underline;
 }
 
 .dropdown-toggle {
@@ -129,68 +127,56 @@ body {
     cursor: pointer;
 }
 
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    list-style: none;
-    padding: 10px;
-    margin: 0;
-    width: 150px;
-    border-radius: 5px;
-}
 
-.dropdown-menu li {
-    padding: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.dropdown-menu li:hover {
-    background-color: #f0f0f0;
-}
-
-.dropdown.open .dropdown-menu {
-    display: block;
-}
-
-
-/* Side Navigation */
-.side-navigation {
-    position: absolute;
-    left: 0;
-    top: 60px; /* Adjust for Navbar height */
+/* --- Стили бокового меню --- */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -250px; /* Начальное положение вне экрана */
     width: 250px;
-    background-color: #f8f9fa;
-    padding: 15px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    margin-top: 72px;
+    height: 100%;
+    z-index: 1100;
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+    transition: left 0.3s ease-in-out;
 }
 
-.side-navigation h4 {
-    font-size: 18px;
-    margin-bottom: 10px;
+.side-menu.open {
+    left: 0;
 }
 
-.side-navigation ul {
+.side-menu ul {
     list-style: none;
     padding: 0;
+    margin-top: 40px;
 }
 
-.side-navigation li {
-    margin: 5px 0;
+.side-menu li {
+    margin: 15px 0;
 }
 
-.side-navigation li a {
-    text-decoration: none;
-    color: #007bff;
+/* --- Стили для пунктов меню --- */
+.nav-item {
+    padding: 10px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    transition: background 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.side-navigation li a:hover {
-    text-decoration: underline;
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
+
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 
 /* --- Кнопка меню --- */
 .menu-button {
@@ -207,39 +193,6 @@ body {
     background-color: #0073a8;
 }
 
-.close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 15px;
-}
-
-.side-menu ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 40px;
-}
-
-.side-menu li {
-    margin: 15px 0;
-}
-
-.side-menu a {
-    text-decoration: none;
-    color: #007bff;
-    font-size: 18px;
-}
-
-.side-menu a:hover {
-    text-decoration: underline;
-}
-
-.side-menu.open {
-    left: 0; /* Показываем меню */
-}
 
 .tasks-menu {
     position: relative;
@@ -253,36 +206,16 @@ body {
     cursor: pointer;
 }
 
-.side-menu {
-    position: fixed;
-    top: 0;
-    right: -250px;
-    width: 250px;
-    height: 100%;
-    background: #34495e;
-    transition: left 0.3s ease-in-out;
-    padding: 20px;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 1100;
+
+.content-wrapper {
+    transition: transform 0.3s ease-in-out;
 }
 
-.side-menu.open {
-    right: 0;
+/* При открытии меню контент сдвигается */
+.menu-open .content-wrapper {
+    transform: translateX(250px);
 }
 
-.side-menu ul {
-    list-style: none;
-    padding: 0;
-}
-
-.side-menu ul li {
-    padding: 10px 0;
-}
-
-.side-menu ul li a {
-    color: white;
-    text-decoration: none;
-}
 
 .close-button {
     background: none;
@@ -299,7 +232,6 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s;
@@ -307,7 +239,7 @@ body {
 
 .overlay.active {
     opacity: 1;
-    pointer-events: all;
+    pointer-events: none;
     display: block;
 }
 
@@ -321,5 +253,41 @@ body {
     font-size: 24px;
     cursor: pointer;
     color: white;
+}
+
+.menu-section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #f1f1f1;
+    margin: 5px 0 5px 5px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-list li {
+    padding: 1px 1.5px;
+}
+
+.nav-list li a {
+    text-decoration: none;
+    color: white;
+    display: block;
+    transition: background 0.3s;
+}
+
+.nav-list li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+/* --- Выравнивание RoleList --- */
+.nav-list .role-list {
+    padding-left: 1.5px;
 }
 

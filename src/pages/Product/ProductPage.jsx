@@ -6,7 +6,7 @@ import MyModal from "../../components/UI/MyModal/MyModal";
 import ProductModal from "../../components/Products/ProductManagerModal";
 import GroupModal from "../../components/Groups/GroupModal";
 import '../../styles/Group.css';
-import ProductFileManager from "../../components/ProductFileManager";
+import FileManager from "../../components/FileManager/FileManager";
 import MyInput from "../../components/UI/input/MyInput";
 import {useTasks} from "../../hooks/useTasks";
 import MyButton from "../../components/UI/button/MyButton";
@@ -152,7 +152,7 @@ const ProductsPage = () => {
             </div>
             <div className="product-section">
                 <div className="product-list">
-                    <ProductFileManager/>
+                    <FileManager/>
                     <div className="search-bar">
                         <MyInput
                             value={filter.query}

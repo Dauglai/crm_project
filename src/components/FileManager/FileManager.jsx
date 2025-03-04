@@ -1,8 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+import "./FileManager.css";
+import {useNavigate} from "react-router-dom";
 
-const ProductFileManager = () => {
 
+const FileManager = () => {
+    const navigate = useNavigate();
     const csrfToken = document.cookie
         .split('; ')
         .find((row) => row.startsWith('csrftoken'))
@@ -24,6 +27,7 @@ const ProductFileManager = () => {
                 withCredentials: true,
             });
             alert(response.data.message);
+            window.location.reload(); // Перезагрузка страницы после успешного экспорта
         } catch (error) {
             console.error(error);
             alert('Ошибка при импорте продуктов');
@@ -43,6 +47,7 @@ const ProductFileManager = () => {
             link.setAttribute('download', 'products.xlsx');
             document.body.appendChild(link);
             link.click();
+
         } catch (error) {
             console.error(error);
             alert('Ошибка при экспорте продуктов');
@@ -50,17 +55,19 @@ const ProductFileManager = () => {
     };
 
     return (
-        <div>
-            <h3>Управление файлами</h3>
-            <div>
-                <label>
-                    Импортировать продукты:
-                    <input type="file" onChange={handleImport} accept=".xlsx" />
+        <div className="file-management">
+            <div className="icons-container">
+                <label className="icon-button">
+                    <img src="/images/icons/import.svg" alt="Импорт" />
+                    <input type="file" onChange={handleImport} accept=".xlsx" hidden />
                 </label>
+                <button className="icon-button" onClick={handleExport}>
+                    <img src="/images/icons/export.svg" alt="Экспорт" />
+                </button>
             </div>
-            <button onClick={handleExport}>Экспортировать продукты</button>
+            <h3>Управление файлами</h3>
         </div>
     );
 };
 
-export default ProductFileManager;
+export default FileManager;

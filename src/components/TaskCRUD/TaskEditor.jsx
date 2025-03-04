@@ -26,6 +26,7 @@ function TaskEditor({ taskData, setTaskData }) {
                         ["clean"]
                     ],
                 }}
+                //style={{ height: "100px" }} // Задаем высоту
             />
         </div>
     );

@@ -3,13 +3,16 @@ import axios from "axios";
 import "../../styles/TaskForm.css";
 import ProfileModal from "../UI/ProfileModal/ProfileModal";
 import EmployeeList from "../EmployeeList";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import TaskEditor from "./TaskEditor";
 
 const TaskCreateForm = () => {
+    const [searchParams] = useSearchParams();
+    const orderId = searchParams.get("orderId") || null;
     const [profiles, setProfiles] = useState([]);
+    const [profile, setProfile] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
     const [modalField, setModalField] = useState("");
@@ -22,6 +25,7 @@ const TaskCreateForm = () => {
         observers: [],
         coordinators: [],
         file: null,
+        order: orderId,
     });
 
     useEffect(() => {
@@ -32,6 +36,24 @@ const TaskCreateForm = () => {
             setProfiles(response.data.results);
         };
         fetchTasks();
+    }, []);
+
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/accounts/profile/", {
+                withCredentials: true,
+            });
+            const data = response.data.results[0]; //первый профиль из массива
+            if (data) {
+                setProfile(data);
+            }
+        } catch (err) {
+            console.error("Ошибка при загрузке профиля:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchProfile();
     }, []);
 
     const handleChange = (e) => {
@@ -69,13 +91,16 @@ const TaskCreateForm = () => {
         if (taskData.file) {
             formData.append("file", taskData.file);
         }
+        if (orderId) {
+            formData.append("order", orderId);
+        }
 
         // Добавляем массивы (наблюдателей и координаторов)
         taskData.observers.forEach((observer) => formData.append("observers", observer));
         taskData.coordinators.forEach((coordinator) => formData.append("coordinators", coordinator));
 
         try {
-            const response = await axios.post('http://localhost:8000/task/create/', formData, {
+            const response = await axios.post("http://localhost:8000/task/create/", formData, {
                 headers: {
                     "X-CSRFToken": csrfToken,
                     "Content-Type": "multipart/form-data",
@@ -83,59 +108,87 @@ const TaskCreateForm = () => {
                 withCredentials: true,
             });
 
-            const taskId = response.data.id;
-            navigate(`/tasks/${taskId}`);
+            if (response.status === 201) {
+                if (orderId) {
+                    navigate(`/orders/${orderId}`);
+                }
+                else navigate(`/tasks/${response.data.id}`);
+            }
+
+            else {
+                throw new Error("Unexpected response status: " + response.status);
+            }
         } catch (error) {
             console.error("Error creating task:", error);
-            alert("Failed to create task");
         }
     };
 
     return (
         <form className="task-form" onSubmit={handleSubmit}>
             <h2>Создание задачи</h2>
-
             <div className="form-row">
-                <label>
-                    Адресат
-                    <select
-                        name="addressee"
-                        value={taskData.addressee}
-                        onChange={handleChange}
-                    >
-                        <option value="">Выберите адресата</option>
-                        {profiles.map(user => (
-                            <option key={user.author.id} value={user.author.id}>
-                                {user.surname} {user.name} {user.patronymic}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                <div className="form-block">
+                    <div>
+                        <h3>Автор</h3>
+                        <p>{profile.surname} {profile.name} {profile.patronymic}</p>
+                    </div>
+                </div>
 
-                <label>
-                    Название задачи:
-                    <input
-                        type="text"
-                        name="name"
-                        value={taskData.name}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
 
-                <label>
-                    Ожидаемый срок выполнения:
-                    <input
-                        type="date"
-                        name="deadline"
-                        value={taskData.deadline}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
+                <div className="form-block">
+                    <div className="form-header">
+                        <h3>Адресат</h3>
+                        <img
+                            src="/images/icons/add_user.svg"
+                            alt="Добавить адресата"
+                            className="add-user-icon"
+                            onClick={() => openModal("addressee")}
+                        />
+                    </div>
+                    <div className="selection-list">
+                        {taskData.addressee && taskData.addressee.length > 0 ? (
+                            (() => {
+                                const user = profiles.find(
+                                    (profile) => profile.author.id === taskData.addressee[0]
+                                );
+                                return (
+                                    <div key={user?.author.id}>
+                                        {user
+                                            ? `${user.surname} ${user.name} ${user.patronymic}`
+                                            : "Пользователь не найден"}
+                                    </div>
+                                );
+                            })()
+                        ) : (
+                            <div>Адресат не выбран</div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="form-block">
+                    <label>
+                        Ожидаемый срок выполнения:
+                        <input
+                            type="date"
+                            name="deadline"
+                            value={taskData.deadline}
+                            onChange={handleChange}
+                            required
+                        />
+                    </label>
+                </div>
             </div>
-
-            <TaskEditor taskData={taskData} setTaskData={setTaskData} />
+            <label>
+                Название задачи:
+                <input
+                    type="text"
+                    name="name"
+                    value={taskData.name}
+                    onChange={handleChange}
+                    required
+                />
+            </label>
+            <TaskEditor taskData={taskData} setTaskData={setTaskData}/>
 
             <div className="form-row">
                 <div className="form-block">
@@ -146,30 +199,50 @@ const TaskCreateForm = () => {
                 </div>
 
                 <div className="form-block">
-                    <h3>Наблюдатели</h3>
+                    <div className="form-header">
+                        <h3>Согласователи</h3>
+                        <img
+                            src="/images/icons/add_user.svg"
+                            alt="Добавить соглосователя"
+                            className="add-user-icon"
+                            onClick={() => openModal("coordinators")}
+                        />
+                    </div>
                     <div className="selection-list">
-                        {taskData.observers.map(id => {
-                            const user = profiles.find(profile => profile.author.id === id);
-                            return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
+                        {taskData.coordinators.map((id) => {
+                            const user = profiles.find((profile) => profile.author.id === id);
+                            return (
+                                <div key={id}>
+                                    {user ? `${user.surname} ${user.name} ${user.patronymic}` : ""}
+                                </div>
+                            );
                         })}
                     </div>
-                    <button type="button" onClick={() => openModal("observers")}>
-                        Добавить наблюдателей
-                    </button>
                 </div>
 
                 <div className="form-block">
-                    <h3>Координаторы</h3>
+                    <div className="form-header">
+                        <h3>Наблюдатели</h3>
+                        <img
+                            src="/images/icons/add_user.svg"
+                            alt="Добавить наблюдателя"
+                            className="add-user-icon"
+                            onClick={() => openModal("observers")}
+                        />
+                    </div>
                     <div className="selection-list">
-                        {taskData.coordinators.map(id => {
-                            const user = profiles.find(profile => profile.author.id === id);
-                            return <div key={id}>{user ? `${user.surname} ${user.name} ${user.patronymic}` : ''}</div>;
+                        {taskData.observers.map((id) => {
+                            const user = profiles.find((profile) => profile.author.id === id);
+                            return (
+                                <div key={id}>
+                                    {user ? `${user.surname} ${user.name} ${user.patronymic}` : ""}
+                                </div>
+                            );
                         })}
                     </div>
-                    <button type="button" onClick={() => openModal("coordinators")}>
-                        Добавить координаторов
-                    </button>
                 </div>
+
+
             </div>
 
             <button type="submit">Создать задачу</button>

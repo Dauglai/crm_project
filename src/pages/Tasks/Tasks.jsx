@@ -10,16 +10,23 @@ import TaskFilter from "../../components/TaskCRUD/TaskFilter";
 import { useTasks } from "../../hooks/useTasks";
 import './Tasks.css';
 import RoleList from "../../components/UI/RoleList/RoleList";
+import {useSearchParams} from "react-router-dom";
 
 
 function Tasks() {
+    const [searchParams] = useSearchParams();
+    const role = searchParams.get("role") || "all";
     const [tasks, setTasks] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    const [filter, setFilter] = useState({ sort: '', query: '', role: 'all' });
+    const [filter, setFilter] = useState({ sort: '', query: '', role: role });
     const sortedAndSearchedPosts = useTasks(tasks, filter.sort, filter.query);
+
+    useEffect(() => {
+        setFilter((prev) => ({ ...prev, role })); // Обновляем filter.role при изменении URL
+    }, [role]);
 
     const handleAccept = async (notifId) => {
         await axios.post(`/notifications/${notifId}/`, { action: 'accept' });
@@ -42,7 +49,7 @@ function Tasks() {
                     page: page,
                     query: filter.query,
                     ordering: filter.sort,
-                    role: filter.role,
+                    role: role,
                 },
                 withCredentials: true,
             });
@@ -64,15 +71,9 @@ function Tasks() {
         setPage(page);
     };
 
-
-
     return (
         <div className="tasks-container">
             <div className="content-container">
-                <RoleList
-                    selectedRole={filter.role}
-                    onRoleChange={(selectedRole) => setFilter({ ...filter, role: selectedRole })}
-                />
                 <div className="table-wrapper">
                     <TaskFilter filter={filter} setFilter={setFilter} setPage={setPage} setLimit={setLimit} limit={limit} page={page} />
                     <hr style={{ margin: '15px 0' }} />

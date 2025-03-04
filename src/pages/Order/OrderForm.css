@@ -55,3 +55,19 @@
 .order-form button:hover {
     background-color: #0056b3;
 }
+.pagination {
+    margin-top: 10px;
+}
+
+.pagination button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.pagination button.active-page {
+    background-color: #007bff;
+    color: #fff;
+}
