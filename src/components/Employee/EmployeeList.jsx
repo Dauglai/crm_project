@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import MyInput from "./UI/input/MyInput";
-import "../styles/EmployeeList.css";
+import MyInput from "../UI/input/MyInput";
+import "./EmployeeList.css";
 
 const EmployeeList = ({ profiles = [], taskData, setTaskData, field }) => {
     const [filter, setFilter] = useState("");
@@ -31,20 +31,20 @@ const EmployeeList = ({ profiles = [], taskData, setTaskData, field }) => {
                 placeholder="Поиск по ФИО"
                 className="search-input"
             />
+
             {filteredProfiles.length > 0 ? (
                 <div className="employee-container">
-                    {filteredProfiles.map(user =>
-                        user.author ? (
-                            <div
-                                key={user.author.id}
-                                className={`employee-item ${taskData[field]?.includes(user.author.id) ? "selected" : ""}`}
-                                onClick={() => handleSelect(user.author.id)}
-                            >
-                                <img src={user.photo || "/default-avatar.png"} alt="Фото" className="employee-photo" />
-                                <span className="employee-name">
-                                    {user.surname} {user.name} {user.patronymic}
-                                </span>
-                            </div>
+                    {filteredProfiles.map(user => user.author ? (
+                        <div
+                            key={user.author.id}
+                            className={`employee-item ${taskData[field]?.includes(user.author.id) ? "selected" : ""}`}
+                            onClick={() => handleSelect(user.author.id)}
+                        >
+                            <img src={user.photo || "/default-avatar.png"} alt="Фото" className="employee-photo" />
+                            <span className="employee-name">
+                                {user.surname} {user.name} {user.patronymic}
+                            </span>
+                        </div>
                         ) : null
                     )}
                 </div>

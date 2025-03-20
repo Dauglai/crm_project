@@ -10,7 +10,7 @@ import TaskListColumn from "../../components/TaskId/TaskListColumn";
 function TasksByDay() {
     const [tasks, setTasks] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(100);
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState({ sort: 'status', query: '', role: 'addressee' });

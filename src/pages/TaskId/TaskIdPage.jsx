@@ -12,6 +12,7 @@ import ReactQuill from "react-quill";
 
 function TaskIdPage() {
     const { id } = useParams();
+    console.log("Task ID from URL:", id);
     const [task, setTask] = useState(null);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
@@ -43,37 +44,66 @@ function TaskIdPage() {
 
     const [progress, setProgress] = useState([]);
 
-    useEffect(() => {
-        fetchTask(id);
-        axios.get(`http://localhost:8000/task/${id}/progress/`, { withCredentials: true })
-            .then((response) => setProgress(response.data))
-            .catch((err) => console.error("Ошибка загрузки хода задачи:", err));
-
-        axios.get(`http://localhost:8000/task/${id}/coordination/`, { withCredentials: true })
-            .then(response => {
-                setCoordinations(response.data);
-                // Находим статус согласования текущего пользователя
-                const currentApproval = response.data.find(c => c.coordinator.id === userProfile?.id);
-                setUserApproval(currentApproval ? currentApproval.is_agreed : null);
-            })
-            .catch((err) => console.error("Ошибка загрузки хода задачи:", err));
-
-        axios.get('http://localhost:8000/accounts/profile/', { withCredentials: true })
-            .then((response) => {
-                setUsers(response.data.results);
-                setUserProfile(response.data.current_user);
-            });
-
-    }, [id]);
-
     const csrfToken = document.cookie
         .split("; ")
         .find(row => row.startsWith("csrftoken"))
         ?.split("=")[1];
 
+    // 🔹 Загружаем данные пользователя
     useEffect(() => {
-        fetchTask(id);
-    }, [id]); // Теперь состояние userApproval корректно обновляется
+        const fetchUserProfile = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/accounts/profile/', { withCredentials: true });
+                console.log("🔹 Профиль загружен:", response.data);
+                setUserProfile(response.data.results);
+            } catch (error) {
+                console.error("❌ Ошибка загрузки профиля:", error);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
+    // 🔹 Загружаем данные задачи и согласования
+    useEffect(() => {
+        if (!id || !userProfile) return; // ✅ Ждём, пока userProfile загрузится
+
+        const fetchData = async () => {
+            try {
+                // Загружаем задачу
+                const taskRes = await axios.get(`http://localhost:8000/task/${id}/`, { withCredentials: true });
+                setTask(taskRes.data);
+
+                // Загружаем ход задачи
+                const progressRes = await axios.get(`http://localhost:8000/task/${id}/progress/`, { withCredentials: true });
+                setProgress(progressRes.data);
+
+                // Загружаем согласования
+                const coordinationRes = await axios.get(`http://localhost:8000/task/${id}/coordination/`, { withCredentials: true });
+                setCoordinations(coordinationRes.data);
+
+                // Определяем, согласовал ли текущий пользователь
+                const currentApproval = coordinationRes.data.find(c => c.coordinator.id === userProfile.id);
+                setUserApproval(currentApproval ? currentApproval.is_agreed : null);
+
+                // Загружаем пользователей
+                const usersRes = await axios.get('http://localhost:8000/accounts/search_profiles/', { withCredentials: true });
+                setUsers(usersRes.data.results);
+
+            } catch (error) {
+                console.error("❌ Ошибка загрузки данных:", error);
+            }
+        };
+
+        fetchData();
+    }, [id, userProfile]); // ✅ Теперь ждем userProfile перед загрузкой данных
+
+    // 🔹 Логируем обновленный профиль пользователя
+    useEffect(() => {
+        if (userProfile) {
+            console.log("✅ Обновленный userProfile:", userProfile.id);
+        }
+    }, [userProfile]);
 
     const handleApproval = async (isApproved) => {
         try {
@@ -117,7 +147,7 @@ function TaskIdPage() {
                     description: result.description,
                     file: result.file || null,
                     task: task.id,
-                    author: userProfile.user.id,
+                    author: task.id, // не важно
 
                 },
                 {
@@ -168,7 +198,8 @@ function TaskIdPage() {
 
 
             {/* Кнопки согласования */}
-            {task?.coordinators?.some(coord => coord.id === userProfile?.id) && (
+            {Array.isArray(task?.coordinators) &&
+                task.coordinators.some(coord => coord.id === userProfile?.id) && (
                 <div className="approval-buttons">
                     {userApproval === true ? (
                         <button className="approved" disabled>Вами согласовано</button>
@@ -242,7 +273,7 @@ function TaskIdPage() {
                         ) : (
                             <p>Результат пока не добавлен</p>
                         )}
-                        {userProfile?.id === task?.adresse?.id && (
+                        {userProfile?.id === task?.addressee?.id && (
                             <div>
                                 <ReactQuill value={result?.description || ""}
                                             onChange={(value) => setResult({...result, description: value})}/>

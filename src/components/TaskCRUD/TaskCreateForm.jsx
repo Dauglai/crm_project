@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../../styles/TaskForm.css";
 import ProfileModal from "../UI/ProfileModal/ProfileModal";
-import EmployeeList from "../EmployeeList";
+import EmployeeList from "../Employee/EmployeeList";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";

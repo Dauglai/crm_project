@@ -21,7 +21,6 @@ const OutletsManager = () => {
     const [profileModalVisible, setProfileModalVisible] = useState(false);
     const [editingOutlet, setEditingOutlet] = useState(null);
     const [roleModalVisible, setRoleModalVisible] = useState(false);
-    const [userModalVisible, setUserModalVisible] = useState(false);
     const [editingRole, setEditingRole] = useState(null);
     const [modalProfile, setModalProfile] = useState(null);
     const [roleFormData, setRoleFormData] = useState({
@@ -89,10 +88,6 @@ const OutletsManager = () => {
         setRoleModalVisible(true);
     };
 
-    const openCreateProfileModal = () => {
-        setUserModalVisible(true);
-    };
-
     const showProfileModal = (profile) => {
         setModalProfile(profile);
         setProfileModalVisible(true);
@@ -118,7 +113,9 @@ const OutletsManager = () => {
                             <p className="outlet-address">{outlet.address}</p>
                         </div>
                     ))}
-                    <MyButton onClick={() => openOutletModal()}>Добавить Outlet</MyButton>
+                    <button className="icon-button" onClick={() => openOutletModal()}>
+                        <img src="/images/icons/plus.svg" alt="Экспорт"/>
+                    </button>
                 </div>
 
                 <div className="roles-section">
@@ -144,9 +141,7 @@ const OutletsManager = () => {
                         Добавить пользователя
                     </MyButton>
 
-                    <MyButton className="add-role-button" onClick={() => openCreateProfileModal()}>
-                        Добавить нового пользователя
-                    </MyButton>
+
                 </div>
             </div>
             {/* Модальное окно Outlet */}
@@ -176,11 +171,6 @@ const OutletsManager = () => {
                 </MyModal>
             )}
 
-            {userModalVisible && (
-                <MyModal visible={userModalVisible} setVisible={setUserModalVisible}>
-                    <AddProfilePage/>
-                </MyModal>
-            )}
 
             {profileModalVisible && (
                 <ProfileModal visible={profileModalVisible} setVisible={setProfileModalVisible}>

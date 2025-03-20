@@ -31,10 +31,11 @@
     margin-bottom: 10px;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
+    border-left: 6px solid transparent; /* Динамический цвет */
 }
 
 .task-card-column:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .task-left {
@@ -68,22 +69,6 @@
     border-radius: 4px;
     font-size: 12px;
     font-weight: bold;
-    background-color: #007bff;
-    color: white;
-}
-
-.status.выполнена {
-    background-color: #28a745;
-    color: white;
-}
-
-.status.на согласовании {
-    background-color: #ffc107;
-    color: black;
-}
-
-.status.отменена {
-    background-color: #dc3545;
     color: white;
 }
 

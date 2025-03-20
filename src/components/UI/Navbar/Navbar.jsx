@@ -1,18 +1,43 @@
 import React, { useState, useContext, useEffect } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, Route, useNavigate} from "react-router-dom";
 import { AuthContext } from "../../../context";
 import MyButton from "../button/MyButton";
 import "./Navbar.css";
-import NotificationDropdown from "../../NotificationDropDown";
+import NotificationDropdown from "../../NotificationsDrop/NotificationDropDown";
 import RoleList from "../RoleList/RoleList";
+import api from "../../../configs/api";
+import useOnlineUsers from "../../../hooks/useOnlineUsers";
+import ProtectedRoute from "../../API/ProtectedRoute";
+import OrderForm from "../../../pages/Order/OrderForm";
+import OrderDetailPage from "../../../pages/OrderDetail/OrderDetailPage";
 
 function Navbar() {
     const { isAuth, setIsAuth } = useContext(AuthContext);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const [dropdownVisible, setDropdownVisible] = useState(false);
     const [selectedRole, setSelectedRole] = useState("all");
     const navigate = useNavigate();
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const onlineUsers = useOnlineUsers();
+
+    useEffect(() => {
+        fetchUnreadCount();
+        const interval = setInterval(() => {
+            fetchUnreadCount();
+        }, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await api.get("/notifications/");
+            setUnreadCount(response.data.count);
+        } catch (error) {
+            console.error("Ошибка получения количества непрочитанных уведомлений", error);
+        }
+    };
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -71,31 +96,35 @@ function Navbar() {
                 </div>
 
                 <div className="nav-icons">
+                    <span className="online-users">🟢 {onlineUsers.length}</span> {/* Отображаем число онлайн пользователей */}
                     <button className="notification-icon" onClick={() => setDropdownVisible(!dropdownVisible)}>
                         🔔
                     </button>
                     {dropdownVisible && <NotificationDropdown/>}
                 </div>
-
                 <div className="header_button">
                     <MyButton onClick={handleLogout}>Выйти</MyButton>
                 </div>
             </div>
-
             {/* Выдвижное меню */}
             <div className={`side-menu ${showMenu ? "open" : ""}`}>
                 <ul className="nav-list">
                     {/* --- Раздел "Задачи" --- */}
                     <li className="menu-section-title">Задачи</li>
                     <RoleList selectedRole={selectedRole} onRoleChange={handleRoleChange}/>
-                    <li><Link to="/tasks_by_day">Мои задачи по дням</Link></li>
                     <li><Link to="/tasks/create">Создать задачу</Link></li>
+                    <li><Link to="/tasks_by_day">Мои задачи по дням</Link></li>
+                    <li><Link to="/notifications">Запросы</Link></li>
 
                     {/* --- Раздел "Справочники" --- */}
                     <li className="menu-section-title">Справочники</li>
                     <li><Link to="/products">Номенклатура</Link></li>
                     <li><Link to="/outlets">Торговые точки</Link></li>
-                    <li><Link to="/settings">Настройки</Link></li>
+                    <li><Link to="/employee">Сотрудники</Link></li>
+
+                    <li className="menu-section-title">Заказы</li>
+                    <li><Link to="/orders/create">Создать Заказ</Link></li>
+                    <li><Link to="/orders">Список</Link></li>
                 </ul>
             </div>
 

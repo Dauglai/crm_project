@@ -131,7 +131,13 @@ const ProductsPage = () => {
         <div className="product-manager">
             <h2>Номенклатура</h2>
             <div className="group-list">
-                <h3>Группы</h3>
+                <div className="group-add">
+                    <h3>Группы</h3>
+                    <button className="icon-button" onClick={() => showGroupModal()}>
+                        <img src="/images/icons/plus.svg" alt="Экспорт"/>
+                    </button>
+                </div>
+
                 <ul>
                     {groups.map((group) => (
                         <li
@@ -148,19 +154,23 @@ const ProductsPage = () => {
                         </li>
                     ))}
                 </ul>
-                <MyButton onClick={() => showGroupModal()}>Добавить новую группу</MyButton>
             </div>
             <div className="product-section">
                 <div className="product-list">
-                    <FileManager/>
-                    <div className="search-bar">
+
+                    <div className="product-add">
                         <MyInput
                             value={filter.query}
                             onChange={(e) => setFilter({...filter, query: e.target.value})}
                             placeholder="Поиск продуктов"
                         />
+
+                        <button className="icon-button" onClick={() => showProductModal()}>
+                            <img src="/images/icons/plus.svg" alt="Экспорт"/>
+                        </button>
+                        <FileManager/>
                     </div>
-                    <MyButton onClick={() => showProductModal()}>Добавить новый продукт</MyButton>
+
                     {sortedAndSearchedProducts.length > 0 ? (
                         <ul>
                             {sortedAndSearchedProducts.map((product) => (

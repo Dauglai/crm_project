@@ -8,7 +8,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 10px 10px;
     background-color: #2c3e50;
     color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -84,8 +84,8 @@ body {
 }
 
 .profile-page {
-    margin-top: 80px; /* Учитываем фиксированную высоту Navbar */
-    padding: 20px;
+    margin-top: 10px; /* Учитываем фиксированную высоту Navbar */
+    padding: 10px;
     font-family: 'Arial', sans-serif; /* Новый шрифт */
 }
 
@@ -150,11 +150,11 @@ body {
 .side-menu ul {
     list-style: none;
     padding: 0;
-    margin-top: 40px;
+    margin-top: 1px;
 }
 
 .side-menu li {
-    margin: 15px 0;
+    margin: 5px 0;
 }
 
 /* --- Стили для пунктов меню --- */
@@ -243,25 +243,15 @@ body {
     display: block;
 }
 
-.nav-icons {
-    position: relative;
-}
-
-.notification-icon {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: white;
-}
 
 .menu-section-title {
-    font-size: 16px;
+    font-size: 20px; /* Увеличил размер шрифта */
     font-weight: bold;
     color: #f1f1f1;
-    margin: 5px 0 5px 5px;
-    padding-top: 5px;
+    margin-top: 20px; /* Увеличил отступ перед заголовками */
+    padding-top: 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Arial', sans-serif;
 }
 
 .nav-list {
@@ -271,7 +261,7 @@ body {
 }
 
 .nav-list li {
-    padding: 1px 1.5px;
+    padding: 1px 1px;
 }
 
 .nav-list li a {
@@ -283,11 +273,57 @@ body {
 
 .nav-list li a:hover {
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
+    border-radius: 1px;
 }
 
 /* --- Выравнивание RoleList --- */
 .nav-list .role-list {
-    padding-left: 1.5px;
+    padding-left: 1px;
 }
 
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 3px 6px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2c3e50;
+    color: white;
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notification-icon {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+.online-users {
+    font-size: 16px;
+    font-weight: bold;
+    color: #27ae60;
+}

@@ -46,6 +46,30 @@
     margin-top: 20px;
 }
 
+.group-add{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; /* Выравнивание элементов по центру */
+    gap: 10px; /* Добавляет отступ между заголовком и кнопкой */
+}
+
+.product-add{
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Выравнивание элементов по центру */
+    gap: 20px; /* Добавляет отступ между заголовком и кнопкой */
+}
+
+.icon-button {
+    margin-bottom: 10px;
+}
+
+.icon-button img {
+    width: 30px; /* Увеличенный размер иконок */
+    height: 30px;
+}
+
 .group-item {
     display: flex;
     justify-content: space-between;

@@ -57,6 +57,7 @@ const FileManager = () => {
     return (
         <div className="file-management">
             <div className="icons-container">
+                <h4>Файлообмен</h4>
                 <label className="icon-button">
                     <img src="/images/icons/import.svg" alt="Импорт" />
                     <input type="file" onChange={handleImport} accept=".xlsx" hidden />
@@ -65,7 +66,6 @@ const FileManager = () => {
                     <img src="/images/icons/export.svg" alt="Экспорт" />
                 </button>
             </div>
-            <h3>Управление файлами</h3>
         </div>
     );
 };

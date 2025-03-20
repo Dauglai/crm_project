@@ -1,15 +1,15 @@
-import React, {useContext, useState} from 'react';
-import MyInput from "../components/UI/input/MyInput";
-import MyButton from "../components/UI/button/MyButton";
-import {AuthContext} from "../context";
-import axios from "axios";
-import {useNavigate} from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import MyInput from "../../components/UI/input/MyInput";
+import MyButton from "../../components/UI/button/MyButton";
+import { AuthContext } from "../../context";
+import { useNavigate } from 'react-router-dom';
+import "./Login.css";
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
-    const {setIsAuth} = useContext(AuthContext);
+    const { setIsAuth } = useContext(AuthContext);
     const navigate = useNavigate();
 
     function getCSRFToken() {
@@ -20,7 +20,6 @@ const Login = () => {
         return csrfToken;
     }
 
-
     const handleLogin = async (e) => {
         e.preventDefault();
         const csrfToken = getCSRFToken();
@@ -30,59 +29,50 @@ const Login = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken,  // Передача CSRF-токена
+                    'X-CSRFToken': csrfToken,
                 },
                 body: new URLSearchParams({
                     username: username,
                     password: password
                 }),
-                credentials: 'include'  // Включаем отправку cookies (важно для сессий)
+                credentials: 'include'
             });
 
             if (!response.ok) {
                 throw new Error('Login failed');
             }
 
-            const data = await response.json();
-            console.log('User logged in:', data);
-
-            // Успешная аутентификация
             setIsAuth(true);
             localStorage.setItem('auth', 'true');
-            navigate('/profile');  // Перенаправляем на страницу "posts"
+            navigate('/profile');
 
         } catch (error) {
             console.error(error);
-            setError('Invalid credentials');
+            setError('Неверные учетные данные');
         }
     };
 
-    const log = event => {
-        event.preventDefault();
-        setIsAuth(true);
-        localStorage.setItem('auth', 'true')
-    }
-
-
     return (
-        <div>
-            <h1>Страница для логина</h1>
-            <form onSubmit={handleLogin}>
+        <div className="login-container">
+            <form className="login-form" onSubmit={handleLogin}>
+                <h1 className="login-title">Вход в систему</h1>
                 <MyInput
                     type="text"
                     value={username}
-                    onChange={e=>setUsername(e.target.value)}
+                    onChange={e => setUsername(e.target.value)}
                     placeholder="Введите логин"
+                    className="login-input"
                 />
                 <MyInput
                     type="password"
                     value={password}
-                    onChange={e=>setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                     placeholder="Введите пароль"
+                    className="login-input"
                 />
-                <MyButton type="submit">Войти</MyButton>
+                <MyButton type="submit" className="login-button">Войти</MyButton>
             </form>
-            {error && <p>{error}</p>}
+            {error && <p className="login-error">{error}</p>}
         </div>
     );
 };

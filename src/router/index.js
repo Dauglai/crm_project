@@ -1,7 +1,7 @@
 import About from "../pages/About";
 import Posts from "../pages/Posts";
 import PostIdPage from "../pages/PostIdPage";
-import Login from "../pages/Login";
+import Login from "../pages/Login/Login";
 
 
 export const privateRoutes = [

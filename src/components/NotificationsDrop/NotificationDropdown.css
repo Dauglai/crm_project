@@ -1,0 +1,44 @@
+.notifications-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    width: 300px;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.notification-item.unviewed {
+    background: #fffae6;
+}
+
+.notification-item.viewed {
+    background: #f5f5f5;
+}
+
+.timestamp {
+    font-size: 12px;
+    color: gray;
+}
+
+.no-notifications {
+    text-align: center;
+    padding: 10px;
+    color: gray;
+}

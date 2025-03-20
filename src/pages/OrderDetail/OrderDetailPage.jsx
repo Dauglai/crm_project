@@ -5,12 +5,14 @@ import "./OrderDetailPage.css";
 import MyModal from "../../components/UI/MyModal/MyModal";
 import MyButton from "../../components/UI/button/MyButton";
 import MyInput from "../../components/UI/input/MyInput";
+import TaskIdPage from "../TaskId/TaskIdPage";
 
 const OrderDetailPage = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [task, setTask] = useState(null);
+    const [taskId, setTaskId] = useState(null);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [splitScreen, setSplitScreen] = useState(false);
     const [tasks, setTasks] = useState([]);
@@ -18,13 +20,18 @@ const OrderDetailPage = () => {
 
     useEffect(() => {
         if (!orderId) return;
+
         const fetchOrder = async () => {
             try {
                 const response = await axios.get(`http://localhost:8000/orders/${orderId}/`, {
                     withCredentials: true,
                 });
+                console.log("Загруженный заказ:", response.data); // Лог заказа
                 setOrder(response.data);
+
                 if (response.data.task) {
+                    console.log("Найденная задача в заказе:", response.data.task); // Лог задачи
+                    setTaskId(response.data.task.id);
                     setTask(response.data.task);
                     setSplitScreen(true);
                 }
@@ -32,9 +39,9 @@ const OrderDetailPage = () => {
                 console.error("Ошибка загрузки заказа:", error);
             }
         };
+
         fetchOrder();
     }, [orderId]);
-
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -47,15 +54,33 @@ const OrderDetailPage = () => {
                 console.error("Ошибка загрузки задач:", error);
             }
         };
+
         fetchTasks();
     }, []);
 
+    const getCsrfToken = () => {
+        return document.cookie
+            .split("; ")
+            .find(row => row.startsWith("csrftoken="))
+            ?.split("=")[1] || "";
+    };
+
     const handleTaskSelect = async (selectedTask) => {
+        if (!order) return;
+
         try {
-            await axios.patch(`http://localhost:8000/task/${selectedTask.id}/`, { order: order.id }, {
-                withCredentials: true,
-                headers: { "Content-Type": "application/json" },
-            });
+            await axios.patch(
+                `http://localhost:8000/task/${selectedTask.id}/`,
+                { order: order.id },
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCsrfToken(),
+                    },
+                }
+            );
+
             setTask(selectedTask);
             setSplitScreen(true);
             setShowTaskModal(false);
@@ -71,17 +96,29 @@ const OrderDetailPage = () => {
                 <div className={`order-task-container ${splitScreen ? "split" : ""}`}>
                     <div className="order-section">
                         <h2>Заказ #{order.id}</h2>
-                        <p><strong>Точка продажи:</strong> {order.outlet?.name || "Не указана"}</p>
+                        <p><strong>Точка продажи:</strong> {order.outlet || "Не указана"}</p>
                         <p><strong>Клиент:</strong> {order.client?.name || "Не указан"}</p>
                         <p><strong>Описание:</strong> {order.description || "Без описания"}</p>
+
+                        <h3>Выбранные продукты:</h3>
+                        <ul>
+                            {order.items && order.items.length > 0 ? (
+                                order.items.map((item, index) => (
+                                    <li key={index}>{item.name} - {item.quantity} шт.</li>
+                                ))
+                            ) : (
+                                <p>Нет добавленных продуктов</p>
+                            )}
+                        </ul>
+
                         <MyButton onClick={() => setShowTaskModal(true)}>Привязать задачу</MyButton>
                     </div>
 
-                    {splitScreen && task && (
+
+                    {splitScreen && taskId && (
+
                         <div className="task-section">
-                            <h2>Привязанная задача</h2>
-                            <p><strong>Название:</strong> {task.name}</p>
-                            <p><strong>Статус:</strong> {task.status}</p>
+                            <TaskIdPage id={taskId} />
                         </div>
                     )}
                 </div>
@@ -100,14 +137,17 @@ const OrderDetailPage = () => {
                         className="search-input"
                     />
                     <ul className="task-list">
-                        {tasks.filter(task => task.name.toLowerCase().includes(search.toLowerCase()))
-                            .map((task) => (
+                        {tasks
+                            .filter(task => task.name.toLowerCase().includes(search.toLowerCase()))
+                            .map(task => (
                                 <li key={task.id} onClick={() => handleTaskSelect(task)} className="task-item">
                                     {task.id} - {task.name}
                                 </li>
                             ))}
                     </ul>
-                    <button className="add-task-button" onClick={() => navigate(`/tasks/create?orderId=${orderId}`)}>Добавить новую задачу</button>
+                    <button className="add-task-button" onClick={() => navigate(`/tasks/create?orderId=${orderId}`)}>
+                        Добавить новую задачу
+                    </button>
                 </div>
             </MyModal>
 
