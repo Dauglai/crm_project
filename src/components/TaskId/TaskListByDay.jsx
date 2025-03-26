@@ -42,17 +42,18 @@ const TaskListByDay = ({ tasks }) => {
         return {
             dateStr: date.toISOString().split("T")[0],
             formatted: formatDate(date),
+            label: offset === 0 ? "Сегодня" : offset === 1 ? "Завтра" : "Послезавтра"
         };
     });
 
     return (
         <div className="task-list-by-day">
-            {dates.map(({ dateStr, formatted }) => {
+            {dates.map(({ dateStr, formatted, label }) => {
                 const dayTasks = tasks.filter(task => task.deadline === dateStr);
 
                 return (
                     <div key={dateStr} className="task-day">
-                        <h3>{formatted}</h3>
+                        <h3>{label} ({formatted})</h3>
                         {dayTasks.length > 0 ? (
                             dayTasks.map(task => (
                                 <div
@@ -79,5 +80,6 @@ const TaskListByDay = ({ tasks }) => {
         </div>
     );
 };
+
 
 export default TaskListByDay;

@@ -8,23 +8,25 @@ import './TaskIdPage.css';
 import { format } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
 import ReactQuill from "react-quill";
+import {useAuth} from "../../context";
 
 
-function TaskIdPage() {
-    const { id } = useParams();
+function TaskIdPage({ id: propId }) {
+    const { id: paramId } = useParams(); // Извлекаем id из URL
+    const id = propId || paramId; // Используем propId, если он передан, иначе берем из useParams()
+    //const { id } = useParams();
     console.log("Task ID from URL:", id);
     const [task, setTask] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState("comments");
-    const [userProfile, setUserProfile] = useState(null);
     const [userApproval, setUserApproval] = useState(null);
     const [recipient, setRecipient] = useState(null);
-    const [coordinations, setCoordinations] = useState([]);
     const [isAgreed, setIsAgreed] = useState(task?.is_agreed || false);
-    const isRecipient = task?.adresse?.id === userProfile?.id;
-    const isAuthor = task?.author?.id === userProfile?.id;
+    const isRecipient = false;
+    const isAuthor = false;
     const [result, setResult] = useState(null);
 
     const [fetchTask, isLoading, error] = useFetching(async (taskId) => {
@@ -42,6 +44,19 @@ function TaskIdPage() {
         }
     });
 
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/accounts/profile/', { withCredentials: true });
+                console.log("🔹 Профиль загружен:", response.data);
+                setUserProfile(response.data.results[0]);
+            } catch (error) {
+                console.error("❌ Ошибка загрузки профиля:", error);
+            }
+        };
+        fetchUserProfile();
+    }, []);
+
     const [progress, setProgress] = useState([]);
 
     const csrfToken = document.cookie
@@ -50,24 +65,9 @@ function TaskIdPage() {
         ?.split("=")[1];
 
     // 🔹 Загружаем данные пользователя
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/accounts/profile/', { withCredentials: true });
-                console.log("🔹 Профиль загружен:", response.data);
-                setUserProfile(response.data.results);
-            } catch (error) {
-                console.error("❌ Ошибка загрузки профиля:", error);
-            }
-        };
-
-        fetchUserProfile();
-    }, []);
 
     // 🔹 Загружаем данные задачи и согласования
     useEffect(() => {
-        if (!id || !userProfile) return; // ✅ Ждём, пока userProfile загрузится
-
         const fetchData = async () => {
             try {
                 // Загружаем задачу
@@ -78,12 +78,8 @@ function TaskIdPage() {
                 const progressRes = await axios.get(`http://localhost:8000/task/${id}/progress/`, { withCredentials: true });
                 setProgress(progressRes.data);
 
-                // Загружаем согласования
-                const coordinationRes = await axios.get(`http://localhost:8000/task/${id}/coordination/`, { withCredentials: true });
-                setCoordinations(coordinationRes.data);
-
                 // Определяем, согласовал ли текущий пользователь
-                const currentApproval = coordinationRes.data.find(c => c.coordinator.id === userProfile.id);
+                const currentApproval = taskRes.data.coordination_set.find(c => c.coordinator.id === userProfile.author.id);
                 setUserApproval(currentApproval ? currentApproval.is_agreed : null);
 
                 // Загружаем пользователей
@@ -101,7 +97,7 @@ function TaskIdPage() {
     // 🔹 Логируем обновленный профиль пользователя
     useEffect(() => {
         if (userProfile) {
-            console.log("✅ Обновленный userProfile:", userProfile.id);
+            console.log("✅ Обновленный userProfile:", userProfile.author.id);
         }
     }, [userProfile]);
 
@@ -147,21 +143,43 @@ function TaskIdPage() {
                     description: result.description,
                     file: result.file || null,
                     task: task.id,
-                    author: task.id, // не важно
-
+                    author: userProfile?.id, // передаем ID текущего пользователя
                 },
                 {
                     headers: {
                         "X-CSRFToken": csrfToken,
                         "Content-Type": "multipart/form-data",
                     },
-                    withCredentials: true
+                    withCredentials: true,
                 }
             );
             alert("Результат отправлен!");
-            fetchTask(id);
+            fetchTask(id); // Обновляем данные задачи
         } catch (err) {
             console.error("Ошибка отправки результата:", err);
+        }
+    };
+
+    const handleUpdateResult = async () => {
+        try {
+            await axios.put(
+                `http://localhost:8000/task/${id}/result/`,
+                {
+                    description: result.description,
+                    file: result.file || null,
+                },
+                {
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true,
+                }
+            );
+            alert("Результат обновлен!");
+            fetchTask(id); // Обновляем данные задачи
+        } catch (err) {
+            console.error("Ошибка обновления результата:", err);
         }
     };
 
@@ -181,40 +199,51 @@ function TaskIdPage() {
 
     return (
         <div className="task-page">
-            <h1 className="task-title">Задача: {task?.name}</h1>
 
-            {/* Блоки "Автор" и "Адресат" в строку */}
-            <div className="form-block full-width">
-                <div className="row">
-                        <p><strong>Автор:</strong> {task?.author?.surname} {task?.author?.name}</p>
-                        <p><strong>Адресат:</strong> {task?.addressee?.surname} {task?.addressee?.name}</p>
-                        <p><strong>Срок:</strong> {task?.deadline}</p>
-                        <p><strong>Статус:</strong> {task?.status}</p>
+            <div className="task-container">
+                {/* Заголовок и статус в одной строке */}
+                <div className="task-header">
+                    <h1 className="task-title">Задача: {task?.name}</h1>
+                    <span className={`task-status ${task?.status?.toLowerCase()}`}>{task?.status}</span>
+                </div>
+
+                {/* Автор, адресат и срок в одной строке */}
+                <div className="task-infos">
+                    <div className="task-item">
+                        <strong>Автор:  </strong> {task?.author?.surname} {task?.author?.name}
+                    </div>
+                    <div className="task-item">
+                        <strong>Адресат:  </strong>{task?.addressee?.surname} {task?.addressee?.name}
+                    </div>
+                    <div className="task-item">
+                        <strong>Срок:  </strong> {task?.deadline}
+                    </div>
                 </div>
 
                 <p><strong>Описание:</strong></p>
-                <div className="description-content" dangerouslySetInnerHTML={{ __html: task?.description }} />
+                <div className="description-content" dangerouslySetInnerHTML={{__html: task?.description}}/>
             </div>
 
 
             {/* Кнопки согласования */}
             {Array.isArray(task?.coordinators) &&
-                task.coordinators.some(coord => coord.id === userProfile?.id) && (
-                <div className="approval-buttons">
-                    {userApproval === true ? (
-                        <button className="approved" disabled>Вами согласовано</button>
-                    ) : userApproval === false ? (
-                        <button className="not-approved" disabled>Вами не согласовано</button>
-                    ) : (
-                        <>
-                            <button className="approve-button" onClick={() => handleApproval(true)}>Согласовать</button>
-                            <button className="reject-button" onClick={() => handleApproval(false)}>Не согласовать
-                            </button>
-                        </>
-                    )}
-                </div>
-            )}
-
+                task.coordinators.some(coord => coord.id === userProfile?.author.id) && (
+                    <div className="approval-buttons">
+                        {userApproval === true ? (
+                            <button className="approved" disabled>✅ Вами согласовано</button>
+                        ) : userApproval === false ? (
+                            <button className="not-approved" disabled>❌ Вами не согласовано</button>
+                        ) : (
+                            <>
+                                <button className="approve-button" onClick={() => handleApproval(true)}>✅ Согласовать
+                                </button>
+                                <button className="reject-button" onClick={() => handleApproval(false)}>❌ Не
+                                    согласовать
+                                </button>
+                            </>
+                        )}
+                    </div>
+                )}
 
             {/* Мини-навигация */}
             <div className="mini-navigation">
@@ -264,32 +293,39 @@ function TaskIdPage() {
                         <h2>Результат</h2>
                         {task.result ? (
                             <>
-                                <p><strong>Описание:</strong> {task.result.description}</p>
-                                {task.result.file &&
-                                    <a href={task.result.file} target="_blank" rel="noopener noreferrer">Скачать
-                                        файл</a>}
-                                <p><strong>Автор:</strong> {task.result.author.surname} {task.result.author.name}</p>
+                                <div className="description-content"
+                                     dangerouslySetInnerHTML={{__html: task.result?.description}}/>
+                                {task?.result?.file && (
+                                    <a href={task.result.file} download target="_blank" rel="noopener noreferrer">
+                                        Скачать файл
+                                    </a>
+                                )}
+                                <p><strong>Автор:</strong> {task.addressee.surname} {task.addressee.name}</p>
                             </>
                         ) : (
                             <p>Результат пока не добавлен</p>
                         )}
-                        {userProfile?.id === task?.addressee?.id && (
-                            <div>
-                                <ReactQuill value={result?.description || ""}
-                                            onChange={(value) => setResult({...result, description: value})}/>
-                                <input type="file" onChange={(e) => setResult({...result, file: e.target.files[0]})}/>
-                                <button onClick={handleSubmitResult}>
-                                    {task?.result ? "Обновить результат" : "Отправить результат"}
+
+                        {userProfile?.author.id === task?.author.id && task?.result && task?.status !== "Завершена" && (
+                            <div className="result-buttons">
+                                <button className="accept-button" onClick={() => handleApproveResult(true)}>✔️ Принять
+                                </button>
+                                <button className="decline-button" onClick={() => handleApproveResult(false)}>❌
+                                    Отклонить
                                 </button>
                             </div>
                         )}
 
-                        {userProfile?.id === task?.author?.id && task?.result && task?.status !== "Завершена" && (
+                        {userProfile?.author.id === task?.addressee?.author.id && (
                             <div>
-                                <p>{task.result.description}</p>
-                                {task.result.file && <a href={task.result.file} download>Скачать файл</a>}
-                                <button onClick={() => handleApproveResult(true)}>Принять</button>
-                                <button onClick={() => handleApproveResult(false)}>Отклонить</button>
+                                <ReactQuill value={result?.description || ""}
+                                            onChange={(value) => setResult({...result, description: value})}/>
+                                <input type="file" onChange={(e) => setResult({...result, file: e.target.files[0]})}/>
+                                {task?.result ? (
+                                    <button onClick={handleUpdateResult}>Обновить результат</button>
+                                ) : (
+                                    <button onClick={handleSubmitResult}>Добавить результат</button>
+                                )}
                             </div>
                         )}
                     </div>

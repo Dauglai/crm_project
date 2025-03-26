@@ -111,7 +111,13 @@ const OrderDetailPage = () => {
                             )}
                         </ul>
 
+
+
                         <MyButton onClick={() => setShowTaskModal(true)}>Привязать задачу</MyButton>
+
+                        <button onClick={() => setSplitScreen(!splitScreen)}>
+                            {splitScreen ? "Скрыть задачу" : "Показать задачу"}
+                        </button>
                     </div>
 
 
@@ -151,9 +157,6 @@ const OrderDetailPage = () => {
                 </div>
             </MyModal>
 
-            <button onClick={() => setSplitScreen(!splitScreen)}>
-                {splitScreen ? "Скрыть задачу" : "Показать задачу"}
-            </button>
         </div>
     );
 };

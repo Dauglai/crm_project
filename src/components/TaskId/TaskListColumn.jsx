@@ -48,26 +48,27 @@ const TaskListColumn = ({ tasks }) => {
         return {
             dateStr: date.toISOString().split("T")[0],
             formatted: formatDate(date),
+            label: offset === 0 ? "Сегодня" : offset === 1 ? "Завтра" : "Послезавтра"
         };
     });
 
     return (
         <div className="task-list">
-            {dates.map(({ dateStr, formatted }) => {
+            {dates.map(({ dateStr, formatted, label }) => {
                 const dayTasks = tasks
                     .filter(task => task.deadline === dateStr)
                     .sort((a, b) => (a.time || "").localeCompare(b.time || "")); // Сортировка по времени
 
                 return (
                     <div key={dateStr} className="task-day-column">
-                        <h3>{formatted}</h3>
+                        <h3>{label} ({formatted})</h3>
                         {dayTasks.length > 0 ? (
                             dayTasks.map(task => (
                                 <div
                                     key={task.id}
                                     className="task-card-column"
                                     onClick={() => navigate("/tasks/" + task.id)}
-                                    style={{ borderLeft: `6px solid ${statusColors[task.status] || "#f8f9fa"}` }}
+                                    style={{borderLeft: `6px solid ${statusColors[task.status] || "#f8f9fa"}`}}
                                 >
                                     <div className="task-left">
                                         <h4>#{task.id}. {task.name}</h4>

@@ -28,7 +28,7 @@
     background-color: #f9f9f9;
 }
 .task-section {
-    flex: 1;
+    flex: 2;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;

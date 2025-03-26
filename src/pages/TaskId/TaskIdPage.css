@@ -341,3 +341,116 @@
         }
     }
 }
+
+.approval-buttons, .result-buttons {
+    display: flex;
+    gap: 12px; /* Отступы между кнопками */
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+}
+
+.approval-buttons button,
+.result-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Согласовать */
+.approve-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.approve-button:hover {
+    background-color: #45a049;
+}
+
+/* Не согласовать */
+.reject-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.reject-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Принять */
+.accept-button {
+    background-color: #008CBA;
+    color: white;
+}
+
+.accept-button:hover {
+    background-color: #007bb5;
+}
+
+/* Отклонить */
+.decline-button {
+    background-color: #ff9800;
+    color: white;
+}
+
+.decline-button:hover {
+    background-color: #e68900;
+}
+
+/* Деактивированные кнопки */
+.approved, .not-approved {
+    background-color: #ccc;
+    color: black;
+    cursor: not-allowed;
+}
+
+.task-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовок и статус */
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 8px;
+}
+
+.task-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.task-status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Цвета статусов */
+.task-status.выполнена { background: #4caf50; color: white; }
+.task-status.в_процессе { background: #ff9800; color: white; }
+.task-status.отменена { background: #f44336; color: white; }
+
+/* Автор, адресат и срок в одной строке */
+.task-infos {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 8px;
+}
+
+.task-item {
+    padding: 12px 14px;
+    border-radius: 10px;
+}

@@ -38,6 +38,11 @@ function Navbar() {
         }
     };
 
+    const csrfToken = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("csrftoken"))
+        ?.split("=")[1];
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -51,20 +56,44 @@ function Navbar() {
         };
     }, []);
 
-    const handleLogout = () => {
-        setIsAuth(false);
-        localStorage.removeItem("auth");
+    const getCSRFToken = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api-auth/csrf/", { credentials: "include" });
+            const data = await response.json();
+            return data.csrfToken;
+        } catch (error) {
+            console.error("Ошибка получения CSRF-токена:", error);
+            return null;
+        }
+    };
+
+    const handleLogout = async () => {
+        const csrfToken = await getCSRFToken();  // 👈 Получаем свежий токен
+
+        if (!csrfToken) {
+            console.error("CSRF-токен не получен!");
+            return;
+        }
+
         fetch("http://localhost:8000/api-auth/logout/", {
             method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "Content-Type": "application/json"
+            },
             credentials: "include",
         })
             .then((response) => {
                 if (response.ok) {
                     console.log("User logged out");
+                    setIsAuth(false);
+                    localStorage.removeItem("auth");
+                } else {
+                    console.error("Ошибка при выходе");
                 }
             })
             .catch((error) => {
-                console.error("Error logging out:", error);
+                console.error("Ошибка при разлогине:", error);
             });
     };
 

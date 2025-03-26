@@ -79,6 +79,31 @@ const OrderForm = () => {
         ));
     };
 
+    const [showClientModal, setShowClientModal] = useState(false);
+    const [newClientName, setNewClientName] = useState("");
+
+    const handleAddClient = async () => {
+        if (!newClientName.trim()) {
+            alert("Введите имя клиента");
+            return;
+        }
+
+        try {
+            const response = await axios.post("http://localhost:8000/clients/",
+                { name: newClientName },
+                { withCredentials: true }
+            );
+
+            setClients([...clients, response.data]); // Добавляем клиента в список
+            setSelectedClient(response.data.id); // Сразу выбираем его
+            setNewClientName("");
+            setShowClientModal(false);
+        } catch (error) {
+            console.error("Ошибка при добавлении клиента:", error);
+            alert("Ошибка при добавлении клиента");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -192,23 +217,45 @@ const OrderForm = () => {
                 </select>
             </div>
 
-            {/* Выбор клиента */}
             <div className="form-group">
                 <label>Клиент:</label>
-                <select
-                    name="selectedClient"
-                    value={selectedClient}
-                    onChange={(e) => setSelectedClient(e.target.value)}
-                    required
-                >
-                    <option value="">Выберите клиента</option>
-                    {clients.map((client) => (
-                        <option key={client.id} value={client.id}>
-                            {client.name}
-                        </option>
-                    ))}
-                </select>
+                <div className="client-selection">
+                    <select
+                        name="selectedClient"
+                        value={selectedClient}
+                        onChange={(e) => setSelectedClient(e.target.value)}
+                        required
+                    >
+                        <option value="">Выберите клиента</option>
+                        {clients.map((client) => (
+                            <option key={client.id} value={client.id}>
+                                {client.name}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="button" className="add-client-btn" onClick={() => setShowClientModal(true)}>
+                        Добавить клиента
+                    </button>
+                </div>
             </div>
+
+            {/* Модальное окно для добавления клиента */}
+            {showClientModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Добавить клиента</h3>
+                        <input
+                            type="text"
+                            placeholder="Имя клиента"
+                            value={newClientName}
+                            onChange={(e) => setNewClientName(e.target.value)}
+                        />
+                        <button onClick={handleAddClient}>Добавить</button>
+                        <button onClick={() => setShowClientModal(false)}>Закрыть</button>
+                    </div>
+                </div>
+            )}
+
 
             {/* Описание */}
             <div className="form-group">
@@ -222,7 +269,6 @@ const OrderForm = () => {
                 />
             </div>
 
-            <button type="submit">Создать заказ</button>
         </form>
     );
 };
